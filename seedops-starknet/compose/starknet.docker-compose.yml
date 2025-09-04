@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  starknet:
+    image: eqlabs/pathfinder:latest
+    container_name: starknet-validator
+    user: "1000:1000"
+    restart: unless-stopped
+    ports:
+      - "${RPC_PORT:-9545}:9545"
+      - "${P2P_PORT:-9546}:9546"
+    volumes:
+      - ${DATA_DIR:-/opt/starknet/data}:/usr/share/pathfinder/data
+      - ${KEYSTORE_PATH:-/opt/starknet/keys}:/usr/share/pathfinder/keystore
+      - ${STARKNET_HOME:-/opt/starknet}/config:/usr/share/pathfinder/config
+      - ${STARKNET_HOME:-/opt/starknet}/logs:/usr/share/pathfinder/logs
+    environment:
+      - RUST_LOG=${LOG_LEVEL:-info}
+      - PATHFINDER_HTTP_RPC_ADDRESS=0.0.0.0:9545
+      - PATHFINDER_P2P_ADDRESS=0.0.0.0:9546
+      - PATHFINDER_ETHEREUM_API_URL=${ETHEREUM_API_URL:-https://eth-mainnet.alchemyapi.io/v2/your-api-key}
+      - PATHFINDER_NETWORK=${NETWORK:-mainnet}
+      - PATHFINDER_DATA_DIRECTORY=/usr/share/pathfinder/data
+      - PATHFINDER_KEYSTORE_DIRECTORY=/usr/share/pathfinder/keystore
+      - PATHFINDER_CONFIG_FILE=/usr/share/pathfinder/config/config.yaml
+    command:
+      - "--http-rpc-address=0.0.0.0:9545"
+      - "--p2p-address=0.0.0.0:9546"
+      - "--ethereum.api.url=${ETHEREUM_API_URL:-https://eth-mainnet.alchemyapi.io/v2/your-api-key}"
+      - "--network=${NETWORK:-mainnet}"
+      - "--data-directory=/usr/share/pathfinder/data"
+      - "--keystore-directory=/usr/share/pathfinder/keystore"
+      - "--config-file=/usr/share/pathfinder/config/config.yaml"
+      - "--log-level=${LOG_LEVEL:-info}"
+    networks:
+      - starknet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9545/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Servicio de monitoreo básico integrado
+  starknet-monitor:
+    image: curlimages/curl:latest
+    container_name: starknet-monitor
+    user: "1000:1000"
+    restart: unless-stopped
+    volumes:
+      - ${STARKNET_HOME:-/opt/starknet}/scripts:/scripts
+      - ${STARKNET_HOME:-/opt/starknet}/logs:/logs
+    command:
+      - "/bin/sh"
+      - "-c"
+      - |
+        while true; do
+          # Verificar salud del nodo
+          if curl -f -s http://starknet:9545/health > /dev/null; then
+            echo "$(date): Node healthy" >> /logs/monitor.log
+          else
+            echo "$(date): Node unhealthy" >> /logs/monitor.log
+          fi
+          
+          # Verificar métricas básicas
+          curl -s http://starknet:9545/metrics > /logs/metrics.log 2>/dev/null || true
+          
+          sleep 60
+        done
+    networks:
+      - starknet
+    depends_on:
+      - starknet
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+
+volumes:
+  starknet_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-/opt/starknet/data}
+  
+  starknet_keys:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${KEYSTORE_PATH:-/opt/starknet/keys}
+  
+  starknet_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STARKNET_HOME:-/opt/starknet}/config
+  
+  starknet_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STARKNET_HOME:-/opt/starknet}/logs
+
+networks:
+  starknet:
+    driver: bridge
+    internal: false
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

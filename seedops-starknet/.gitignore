@@ -1,0 +1,240 @@
+# SEED Ops - Starknet Repository
+# Archivos y directorios que NO deben subirse al repositorio
+
+# =============================================================================
+# ARCHIVOS SENSIBLES Y CONFIGURACIÓN
+# =============================================================================
+
+# Variables de entorno con secretos
+env/starknet.env
+env/*.env
+.env
+.env.local
+.env.production
+
+# Claves y certificados
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+keys/
+certs/
+ssl/
+
+# Archivos de backup encriptados
+*.gpg
+*.enc
+backups/
+*.backup
+
+# Archivos de configuración local
+config/local/
+*.local
+local.*
+
+# =============================================================================
+# LOGS Y ARCHIVOS TEMPORALES
+# =============================================================================
+
+# Logs del sistema
+*.log
+logs/
+/var/log/starknet-*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+temp/
+tmp/
+*.swp
+*.swo
+*~
+
+# Archivos de lock
+*.lock
+.lock
+
+# =============================================================================
+# DATOS Y CACHE
+# =============================================================================
+
+# Datos de blockchain (muy pesados)
+data/
+blockchain/
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache y archivos temporales
+.cache/
+cache/
+*.cache
+
+# Archivos de Docker
+.dockerignore
+docker-compose.override.yml
+
+# =============================================================================
+# DIRECTORIOS DE TRABAJO
+# =============================================================================
+
+# Directorios de usuario
+/opt/starknet/
+starknet-home/
+
+# Directorios de monitoreo
+monitoring/data/
+prometheus/data/
+grafana/data/
+alertmanager/data/
+
+# Directorios de incidentes
+incidents/
+diagnostics/
+
+# =============================================================================
+# ARCHIVOS DEL SISTEMA
+# =============================================================================
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.sublime-*
+.atom/
+
+# Archivos de Git
+.git/
+.gitignore.bak
+
+# =============================================================================
+# ARCHIVOS DE DESARROLLO
+# =============================================================================
+
+# Archivos de testing
+test-results/
+coverage/
+*.test
+*.spec
+
+# Archivos de build
+build/
+dist/
+target/
+*.o
+*.a
+
+# Archivos de dependencias
+node_modules/
+vendor/
+.venv/
+venv/
+
+# =============================================================================
+# ARCHIVOS DE BACKUP Y RECUPERACIÓN
+# =============================================================================
+
+# Backups automáticos
+*.tar.gz
+*.tar.bz2
+*.zip
+*.7z
+*.rar
+
+# Archivos de checksum
+*.md5
+*.sha1
+*.sha256
+
+# Archivos de verificación
+*.verify
+*.check
+
+# =============================================================================
+# ARCHIVOS DE MONITOREO
+# =============================================================================
+
+# Métricas y datos de monitoreo
+metrics/
+*.metrics
+*.prom
+
+# Alertas y notificaciones
+alerts/
+notifications/
+*.alert
+
+# =============================================================================
+# ARCHIVOS DE AUDITORÍA
+# =============================================================================
+
+# Logs de auditoría
+audit/
+*.audit
+audit.log
+
+# Archivos de compliance
+compliance/
+*.compliance
+
+# =============================================================================
+# ARCHIVOS DE DOCUMENTACIÓN TEMPORAL
+# =============================================================================
+
+# Documentos en proceso
+*.draft
+*.work
+*.temp.md
+
+# Archivos de traducción
+*.es.md
+*.en.md
+*.fr.md
+
+# =============================================================================
+# ARCHIVOS DE INTEGRACIÓN
+# =============================================================================
+
+# Webhooks y notificaciones
+webhooks/
+*.webhook
+
+# Archivos de integración
+integrations/
+*.integration
+
+# =============================================================================
+# EXCEPCIONES
+# =============================================================================
+
+# NO ignorar estos archivos importantes
+!env/starknet.env.example
+!templates/*.j2
+!compose/*.yml
+!scripts/*.sh
+!*.md
+!Makefile
+!.github/workflows/*.yml
+
+# =============================================================================
+# NOTAS
+# =============================================================================
+
+# IMPORTANTE: Este archivo .gitignore está diseñado para:
+# 1. Proteger secretos y claves privadas
+# 2. Excluir logs y archivos temporales
+# 3. Evitar subir datos de blockchain pesados
+# 4. Mantener solo código y configuración de ejemplo
+# 5. Seguir las mejores prácticas de seguridad
+
+# Para agregar excepciones, usar: !archivo
+# Para ignorar directorios completos, usar: directorio/
+# Para ignorar patrones, usar: *.extensión

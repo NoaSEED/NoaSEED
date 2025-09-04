@@ -1,0 +1,320 @@
+# SEED Ops - Starknet Configuration Template
+# Institutional Node Operations Handbook (INOH)
+#
+# Este archivo es renderizado desde template usando variables de entorno
+# Modificar env/starknet.env para cambiar la configuración
+
+# Configuración de red
+network:
+  name: ${NETWORK:-mainnet}
+  chain_id: ${CHAIN_ID:-SN_MAIN}
+  rpc_url: ${RPC_URL:-https://alpha-mainnet.starknet.io}
+  gateway_url: ${GATEWAY_URL:-https://alpha-mainnet.starknet.io}
+
+# Configuración del nodo
+node:
+  name: ${NODE_NAME:-seed-starknet-validator}
+  version: ${NODE_VERSION:-latest}
+  data_directory: ${DATA_DIR:-/opt/starknet/data}
+  keystore_path: ${KEYSTORE_PATH:-/opt/starknet/keys}
+  log_level: ${LOG_LEVEL:-info}
+  log_file: ${LOG_FILE:-/opt/starknet/logs/starknet.log}
+
+# Configuración de API RPC
+rpc:
+  enabled: ${RPC_ENABLED:-true}
+  host: ${RPC_HOST:-0.0.0.0}
+  port: ${RPC_PORT:-9545}
+  cors_origins: ${RPC_CORS_ORIGINS:-*}
+  max_connections: ${RPC_MAX_CONNECTIONS:-100}
+  timeout: ${RPC_TIMEOUT:-30s}
+  rate_limit: ${RPC_RATE_LIMIT:-1000}
+
+# Configuración de P2P
+p2p:
+  enabled: ${P2P_ENABLED:-true}
+  host: ${P2P_HOST:-0.0.0.0}
+  port: ${P2P_PORT:-9546}
+  max_peers: ${P2P_MAX_PEERS:-50}
+  discovery_enabled: ${P2P_DISCOVERY_ENABLED:-true}
+  bootstrap_nodes: ${P2P_BOOTSTRAP_NODES:-}
+
+# Configuración de sincronización
+sync:
+  mode: ${SYNC_MODE:-full}
+  max_workers: ${SYNC_MAX_WORKERS:-4}
+  batch_size: ${SYNC_BATCH_SIZE:-100}
+  timeout: ${SYNC_TIMEOUT:-60s}
+  retry_attempts: ${SYNC_RETRY_ATTEMPTS:-3}
+
+# Configuración de Ethereum (para L1)
+ethereum:
+  api_url: ${ETHEREUM_API_URL:-https://eth-mainnet.alchemyapi.io/v2/your-api-key}
+  api_key: ${ETHEREUM_API_KEY:-}
+  network_id: ${ETHEREUM_NETWORK_ID:-1}
+  contract_address: ${ETHEREUM_CONTRACT_ADDRESS:-0xc662c410C0ECf747543f5bA90660f6ABeBD9C8c4}
+
+# Configuración de base de datos
+database:
+  type: ${DB_TYPE:-sqlite}
+  path: ${DB_PATH:-/opt/starknet/data/starknet.db}
+  max_connections: ${DB_MAX_CONNECTIONS:-10}
+  timeout: ${DB_TIMEOUT:-30s}
+
+# Configuración de monitoreo
+monitoring:
+  enabled: ${MONITORING_ENABLED:-true}
+  metrics_port: ${METRICS_PORT:-9100}
+  health_check_interval: ${HEALTH_CHECK_INTERVAL:-30s}
+  alerting_enabled: ${ALERTING_ENABLED:-true}
+
+# Configuración de seguridad
+security:
+  max_request_size: ${MAX_REQUEST_SIZE:-10MB}
+  allowed_methods: ${ALLOWED_METHODS:-starknet_*,pathfinder_*}
+  block_private_ips: ${BLOCK_PRIVATE_IPS:-false}
+  rate_limit_enabled: ${RATE_LIMIT_ENABLED:-true}
+
+# Configuración de logging
+logging:
+  level: ${LOG_LEVEL:-info}
+  format: ${LOG_FORMAT:-json}
+  output: ${LOG_OUTPUT:-file}
+  file_path: ${LOG_FILE:-/opt/starknet/logs/starknet.log}
+  max_size: ${LOG_MAX_SIZE:-100MB}
+  max_files: ${LOG_MAX_FILES:-5}
+  compress: ${LOG_COMPRESS:-true}
+
+# Configuración de performance
+performance:
+  max_memory: ${MAX_MEMORY:-8GB}
+  gc_interval: ${GC_INTERVAL:-300s}
+  cache_size: ${CACHE_SIZE:-1GB}
+  worker_threads: ${WORKER_THREADS:-4}
+
+# Configuración de backup
+backup:
+  enabled: ${BACKUP_ENABLED:-true}
+  interval: ${BACKUP_INTERVAL:-24h}
+  retention: ${BACKUP_RETENTION:-7d}
+  compression: ${BACKUP_COMPRESSION:-true}
+
+# Configuración de mantenimiento
+maintenance:
+  auto_update: ${AUTO_UPDATE:-false}
+  update_check_interval: ${UPDATE_CHECK_INTERVAL:-24h}
+  cleanup_interval: ${CLEANUP_INTERVAL:-7d}
+  log_rotation: ${LOG_ROTATION:-true}
+
+# Configuración de alertas
+alerts:
+  cpu_threshold: ${CPU_THRESHOLD:-90}
+  memory_threshold: ${MEMORY_THRESHOLD:-90}
+  disk_threshold: ${DISK_THRESHOLD:-90}
+  sync_lag_threshold: ${SYNC_LAG_THRESHOLD:-100}
+
+# Configuración de desarrollo (solo para testnet/devnet)
+development:
+  debug_mode: ${DEBUG_MODE:-false}
+  trace_enabled: ${TRACE_ENABLED:-false}
+  profiling_enabled: ${PROFILING_ENABLED:-false}
+  test_mode: ${TEST_MODE:-false}
+
+# Configuración de métricas personalizadas
+custom_metrics:
+  block_height: true
+  transaction_count: true
+  peer_count: true
+  sync_status: true
+  uptime: true
+  response_time: true
+
+# Configuración de API endpoints personalizados
+api_endpoints:
+  health: /health
+  metrics: /metrics
+  status: /status
+  info: /info
+  version: /version
+
+# Configuración de timeouts
+timeouts:
+  connection: ${CONNECTION_TIMEOUT:-30s}
+  read: ${READ_TIMEOUT:-60s}
+  write: ${WRITE_TIMEOUT:-60s}
+  idle: ${IDLE_TIMEOUT:-120s}
+
+# Configuración de límites
+limits:
+  max_requests_per_second: ${MAX_REQUESTS_PER_SECOND:-1000}
+  max_concurrent_requests: ${MAX_CONCURRENT_REQUESTS:-100}
+  max_request_body_size: ${MAX_REQUEST_BODY_SIZE:-10MB}
+  max_response_body_size: ${MAX_RESPONSE_BODY_SIZE:-100MB}
+
+# Configuración de caché
+cache:
+  enabled: ${CACHE_ENABLED:-true}
+  ttl: ${CACHE_TTL:-300s}
+  max_size: ${CACHE_MAX_SIZE:-1000}
+  eviction_policy: ${CACHE_EVICTION_POLICY:-lru}
+
+# Configuración de compresión
+compression:
+  enabled: ${COMPRESSION_ENABLED:-true}
+  level: ${COMPRESSION_LEVEL:-6}
+  threshold: ${COMPRESSION_THRESHOLD:-1024}
+
+# Configuración de SSL/TLS (si se requiere)
+ssl:
+  enabled: ${SSL_ENABLED:-false}
+  certificate_file: ${SSL_CERT_FILE:-}
+  private_key_file: ${SSL_KEY_FILE:-}
+  ca_certificate_file: ${SSL_CA_CERT_FILE:-}
+
+# Configuración de proxy (si se requiere)
+proxy:
+  enabled: ${PROXY_ENABLED:-false}
+  upstream_url: ${PROXY_UPSTREAM_URL:-}
+  timeout: ${PROXY_TIMEOUT:-30s}
+  retry_attempts: ${PROXY_RETRY_ATTEMPTS:-3}
+
+# Configuración de rate limiting
+rate_limiting:
+  enabled: ${RATE_LIMITING_ENABLED:-true}
+  requests_per_minute: ${RATE_LIMIT_REQUESTS_PER_MINUTE:-1000}
+  burst_size: ${RATE_LIMIT_BURST_SIZE:-100}
+  window_size: ${RATE_LIMIT_WINDOW_SIZE:-60s}
+
+# Configuración de autenticación (si se requiere)
+authentication:
+  enabled: ${AUTH_ENABLED:-false}
+  method: ${AUTH_METHOD:-none}
+  api_key_header: ${AUTH_API_KEY_HEADER:-X-API-Key}
+  api_key_value: ${AUTH_API_KEY_VALUE:-}
+
+# Configuración de auditoría
+audit:
+  enabled: ${AUDIT_ENABLED:-true}
+  log_requests: ${AUDIT_LOG_REQUESTS:-true}
+  log_responses: ${AUDIT_LOG_RESPONSES:-false}
+  log_errors: ${AUDIT_LOG_ERRORS:-true}
+  log_file: ${AUDIT_LOG_FILE:-/opt/starknet/logs/audit.log}
+
+# Configuración de métricas de negocio
+business_metrics:
+  enabled: ${BUSINESS_METRICS_ENABLED:-true}
+  collection_interval: ${BUSINESS_METRICS_INTERVAL:-60s}
+  export_format: ${BUSINESS_METRICS_FORMAT:-prometheus}
+  export_endpoint: ${BUSINESS_METRICS_ENDPOINT:-}
+
+# Configuración de alertas de negocio
+business_alerts:
+  enabled: ${BUSINESS_ALERTS_ENABLED:-true}
+  notification_channels: ${BUSINESS_ALERTS_CHANNELS:-email,slack}
+  escalation_policy: ${BUSINESS_ALERTS_ESCALATION:-immediate}
+
+# Configuración de compliance
+compliance:
+  enabled: ${COMPLIANCE_ENABLED:-true}
+  data_retention: ${COMPLIANCE_DATA_RETENTION:-7y}
+  audit_trail: ${COMPLIANCE_AUDIT_TRAIL:-true}
+  encryption_at_rest: ${COMPLIANCE_ENCRYPTION_AT_REST:-true}
+  encryption_in_transit: ${COMPLIANCE_ENCRYPTION_IN_TRANSIT:-true}
+
+# Configuración de disaster recovery
+disaster_recovery:
+  enabled: ${DR_ENABLED:-true}
+  backup_frequency: ${DR_BACKUP_FREQUENCY:-1h}
+  recovery_time_objective: ${DR_RTO:-4h}
+  recovery_point_objective: ${DR_RPO:-1h}
+  failover_enabled: ${DR_FAILOVER_ENABLED:-false}
+
+# Configuración de alta disponibilidad
+high_availability:
+  enabled: ${HA_ENABLED:-false}
+  cluster_mode: ${HA_CLUSTER_MODE:-standalone}
+  load_balancer: ${HA_LOAD_BALANCER:-none}
+  health_check_endpoint: ${HA_HEALTH_CHECK_ENDPOINT:-/health}
+  failover_threshold: ${HA_FAILOVER_THRESHOLD:-3}
+
+# Configuración de escalabilidad
+scalability:
+  auto_scaling: ${AUTO_SCALING_ENABLED:-false}
+  min_instances: ${MIN_INSTANCES:-1}
+  max_instances: ${MAX_INSTANCES:-5}
+  scale_up_threshold: ${SCALE_UP_THRESHOLD:-80}
+  scale_down_threshold: ${SCALE_DOWN_THRESHOLD:-20}
+
+# Configuración de testing
+testing:
+  enabled: ${TESTING_ENABLED:-false}
+  test_network: ${TEST_NETWORK:-false}
+  mock_mode: ${MOCK_MODE:-false}
+  test_data_path: ${TEST_DATA_PATH:-/opt/starknet/test-data}
+
+# Configuración de debugging
+debugging:
+  enabled: ${DEBUGGING_ENABLED:-false}
+  log_level: ${DEBUG_LOG_LEVEL:-debug}
+  trace_requests: ${DEBUG_TRACE_REQUESTS:-false}
+  profile_performance: ${DEBUG_PROFILE_PERFORMANCE:-false}
+  memory_profiling: ${DEBUG_MEMORY_PROFILING:-false}
+
+# Configuración de reporting
+reporting:
+  enabled: ${REPORTING_ENABLED:-true}
+  report_interval: ${REPORT_INTERVAL:-24h}
+  report_format: ${REPORT_FORMAT:-json}
+  report_destination: ${REPORT_DESTINATION:-/opt/starknet/reports}
+  include_metrics: ${REPORT_INCLUDE_METRICS:-true}
+  include_logs: ${REPORT_INCLUDE_LOGS:-false}
+
+# Configuración de integración con sistemas externos
+integrations:
+  prometheus: ${INTEGRATION_PROMETHEUS:-true}
+  grafana: ${INTEGRATION_GRAFANA:-true}
+  elasticsearch: ${INTEGRATION_ELASTICSEARCH:-false}
+  splunk: ${INTEGRATION_SPLUNK:-false}
+  datadog: ${INTEGRATION_DATADOG:-false}
+  new_relic: ${INTEGRATION_NEW_RELIC:-false}
+
+# Configuración de webhooks
+webhooks:
+  enabled: ${WEBHOOKS_ENABLED:-false}
+  endpoints: ${WEBHOOK_ENDPOINTS:-}
+  timeout: ${WEBHOOK_TIMEOUT:-30s}
+  retry_attempts: ${WEBHOOK_RETRY_ATTEMPTS:-3}
+  retry_delay: ${WEBHOOK_RETRY_DELAY:-5s}
+
+# Configuración de notificaciones
+notifications:
+  enabled: ${NOTIFICATIONS_ENABLED:-true}
+  email: ${NOTIFICATION_EMAIL:-}
+  slack: ${NOTIFICATION_SLACK:-}
+  pagerduty: ${NOTIFICATION_PAGERDUTY:-}
+  sms: ${NOTIFICATION_SMS:-}
+
+# Configuración de timezone
+timezone:
+  default: ${TIMEZONE:-UTC}
+  display_format: ${TIMEZONE_DISPLAY_FORMAT:-ISO8601}
+
+# Configuración de idioma
+language:
+  default: ${LANGUAGE:-en}
+  supported: ${SUPPORTED_LANGUAGES:-en,es}
+
+# Configuración de versionado
+versioning:
+  api_version: ${API_VERSION:-v1}
+  node_version: ${NODE_VERSION:-latest}
+  config_version: ${CONFIG_VERSION:-1.0}
+
+# Configuración de metadata
+metadata:
+  environment: ${ENVIRONMENT:-production}
+  region: ${REGION:-us-east-1}
+  datacenter: ${DATACENTER:-primary}
+  team: ${TEAM:-seed-ops}
+  project: ${PROJECT:-starknet-validator}
+  contact: ${CONTACT:-ops@seed-org.local}
