@@ -1,10 +1,10 @@
 # SEEDNodes - NodeOps Institucionales
 
-## 🎯 Objetivo Institucional
+## Objetivo Institucional
 
 SEEDNodes está evolucionando de simples scripts a **operaciones autónomas con agentes inteligentes**. Nuestros procesos institucionales ahora son auto-ejecutables, auditables y predictivos, posicionándonos como **pioneros en automatización de nodos en LATAM**.
 
-## 📋 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 seedops-institutional/
@@ -32,45 +32,45 @@ seedops-institutional/
 └── docs/                       # Documentación ejecutiva
 ```
 
-## 🚀 Fases de Implementación
+## Fases de Implementación
 
-### Fase 1: Research Inicial ✅
+### Fase 1: Research Inicial
 - [x] Análisis de estándares institucionales
 - [x] Identificación de métricas clave
 - [x] Definición de diferenciadores SEEDNodes
 
-### Fase 2: Marco Institucional (INOH) 🔄
+### Fase 2: Marco Institucional (INOH)
 - [ ] Manual de Operaciones de Nodos
 - [ ] Estándares de seguridad y compliance
 - [ ] Procedimientos de auditoría
 
-### Fase 3: Playbooks por Red 📋
-- [x] Ethereum (Obol DVT, CSM) ✅
-- [x] Gnosis (108 validators) ✅
-- [x] Starknet (delegación STRK) ✅
+### Fase 3: Playbooks por Red
+- [x] Ethereum (Obol DVT, CSM)
+- [x] Gnosis (108 validators)
+- [x] Starknet (delegación STRK)
 - [ ] Aztec (validators + sequencers)
 
-### Fase 4: Monitoreo & Reporting 📊
+### Fase 4: Monitoreo & Reporting
 - [ ] KPIs por red (uptime, APR, slashing, costos)
 - [ ] Pipeline de reportes automáticos
 - [ ] Dashboard institucional
 
-### Fase 5: Compliance & Governance 🛡️
+### Fase 5: Compliance & Governance
 - [ ] Procesos KYB/KYC
 - [ ] Protocolos de seguridad de claves
 - [ ] Auditorías internas
 
-### Fase 6: Comunicación Institucional 📢
+### Fase 6: Comunicación Institucional
 - [ ] Documento ejecutivo
 - [ ] Reportes para fundaciones
 - [ ] Diferenciación narrativa
 
-### Fase 7: Mejora Continua 🔄
+### Fase 7: Mejora Continua
 - [ ] Revisión trimestral
 - [ ] Actualización de guías
 - [ ] Lessons learned
 
-## 🤖 Evolución hacia Agentic NodeOps
+## Evolución hacia Agentic NodeOps
 
 ### Base Actual
 - Scripts para: bootstrap, hardening, deploy, monitor, backup, incident
@@ -92,13 +92,13 @@ seedops-institutional/
 - Anticipación de amenazas de seguridad
 - Auto-escalado preventivo
 
-## 🔒 Seguridad de Nivel Institucional
+## Seguridad de Nivel Institucional
 
 - **Zero trust**: VPN + MFA, agents sin claves hardcodeadas
 - **Auditoría**: cada acción del agent logueada en repo "audit-logs"
 - **Red team interno**: playbook de simulación de ataque
 
-## 📊 Auditorías Integradas
+## Auditorías Integradas
 
 Cada proceso genera **registro verificable**:
 - Infraestructura: fecha, usuario, servidor, hash de commit, resultado
@@ -106,7 +106,7 @@ Cada proceso genera **registro verificable**:
 - Backups: hash SHA256 + restore test
 - Monitoreo: validación de métricas y SLA
 
-## 🎯 Resultado Final
+## Resultado Final
 
 > "En SEEDNodes, cada proceso operativo está acoplado a un registro de auditoría. Ningún despliegue, actualización o backup se considera válido sin su correspondiente evidencia auditable. Esto garantiza transparencia, trazabilidad y confianza para delegadores, fundaciones y stakeholders."
 

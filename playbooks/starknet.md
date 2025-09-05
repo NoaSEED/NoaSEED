@@ -3,13 +3,13 @@
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
 Configurar y operar nodos de Starknet para delegación de STRK, optimizando rewards y manteniendo uptime ≥ 99.9% con estándares institucionales.
 
 ---
 
-## 📋 Prerequisitos
+## Prerequisitos
 
 ### Hardware Mínimo
 - **CPU**: 8+ cores (ARM64/x86_64) - Starknet es intensivo en CPU
@@ -38,7 +38,7 @@ cp env/starknet.env.example env/starknet.env
 
 ---
 
-## ⚙️ Configuración de Starknet
+## Configuración de Starknet
 
 ### 1. Variables de Entorno
 
@@ -149,7 +149,7 @@ monitoring:
 
 ---
 
-## 🚀 Proceso de Despliegue
+## Proceso de Despliegue
 
 ### 1. Preparación del Entorno
 
@@ -433,7 +433,7 @@ configure_delegation() {
 
 ---
 
-## 📊 Monitoreo y Métricas
+## Monitoreo y Métricas
 
 ### 1. Dashboard de Grafana
 
@@ -540,7 +540,7 @@ send_telegram_alert() {
 
 ---
 
-## 💾 Backup y Recuperación
+## Backup y Recuperación
 
 ### 1. Script de Backup
 
@@ -628,7 +628,7 @@ restore_starknet() {
 
 ---
 
-## 🚨 Respuesta a Incidentes
+## Respuesta a Incidentes
 
 ### 1. Script de Incident Response
 
@@ -736,7 +736,7 @@ handle_rpc_errors() {
 
 ---
 
-## 📈 Optimización y Performance
+## Optimización y Performance
 
 ### 1. Tuning del Sistema
 
@@ -889,7 +889,7 @@ cleanup_logs() {
 
 ---
 
-## 📋 Checklist de Verificación
+## Checklist de Verificación
 
 ### Pre-Despliegue
 - [ ] Hardware cumple requisitos mínimos
@@ -921,7 +921,7 @@ cleanup_logs() {
 
 ---
 
-## 🎯 Métricas de Éxito
+## Métricas de Éxito
 
 ### KPIs Institucionales
 - **Uptime**: ≥ 99.9%

@@ -3,13 +3,13 @@
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
 Configurar y operar validadores Ethereum usando Obol Distributed Validator Technology (DVT) y Consensus Layer Client Management (CSM), optimizando para máxima eficiencia y uptime ≥ 99.9% con estándares institucionales.
 
 ---
 
-## 📋 Prerequisitos
+## Prerequisitos
 
 ### Hardware Mínimo
 - **CPU**: 12+ cores (ARM64/x86_64) - DVT requiere más recursos
@@ -38,7 +38,7 @@ cp env/ethereum.env.example env/ethereum.env
 
 ---
 
-## ⚙️ Configuración de Ethereum
+## Configuración de Ethereum
 
 ### 1. Variables de Entorno
 
@@ -247,7 +247,7 @@ networks:
 
 ---
 
-## 🚀 Proceso de Despliegue
+## Proceso de Despliegue
 
 ### 1. Script de Despliegue Ethereum
 
@@ -438,7 +438,7 @@ main "$@"
 
 ---
 
-## 📊 Monitoreo y Métricas
+## Monitoreo y Métricas
 
 ### 1. Dashboard de Grafana para Ethereum
 
@@ -551,7 +551,7 @@ groups:
 
 ---
 
-## 💾 Backup y Recuperación
+## Backup y Recuperación
 
 ### 1. Script de Backup para Ethereum
 
@@ -600,7 +600,7 @@ EOF
 
 ---
 
-## 📋 Checklist de Verificación
+## Checklist de Verificación
 
 ### Pre-Despliegue
 - [ ] Hardware cumple requisitos (12+ cores, 48GB+ RAM, 3TB+ SSD)
@@ -639,7 +639,7 @@ EOF
 
 ---
 
-## 🎯 Métricas de Éxito
+## Métricas de Éxito
 
 ### KPIs Institucionales
 - **Uptime**: ≥ 99.9%

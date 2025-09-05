@@ -3,13 +3,13 @@
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
 Configurar y operar 108 validadores en Gnosis Chain, optimizando para máxima eficiencia y uptime ≥ 99.9% con estándares institucionales.
 
 ---
 
-## 📋 Prerequisitos
+## Prerequisitos
 
 ### Hardware Mínimo
 - **CPU**: 16+ cores (ARM64/x86_64) - 108 validadores requieren mucho CPU
@@ -38,7 +38,7 @@ cp env/gnosis.env.example env/gnosis.env
 
 ---
 
-## ⚙️ Configuración de Gnosis
+## Configuración de Gnosis
 
 ### 1. Variables de Entorno
 
@@ -199,7 +199,7 @@ logging:
 
 ---
 
-## 🚀 Proceso de Despliegue
+## Proceso de Despliegue
 
 ### 1. Preparación del Entorno
 
@@ -512,7 +512,7 @@ configure_validators() {
 
 ---
 
-## 📊 Monitoreo y Métricas
+## Monitoreo y Métricas
 
 ### 1. Dashboard de Grafana para Gnosis
 
@@ -625,7 +625,7 @@ groups:
 
 ---
 
-## 💾 Backup y Recuperación
+## Backup y Recuperación
 
 ### 1. Script de Backup para Gnosis
 
@@ -671,7 +671,7 @@ EOF
 
 ---
 
-## 🚨 Respuesta a Incidentes
+## Respuesta a Incidentes
 
 ### 1. Script de Incident Response para Gnosis
 
@@ -804,7 +804,7 @@ handle_slashing_risk() {
 
 ---
 
-## 📈 Optimización y Performance
+## Optimización y Performance
 
 ### 1. Tuning del Sistema para 108 Validadores
 
@@ -855,7 +855,7 @@ EOF
 
 ---
 
-## 📋 Checklist de Verificación
+## Checklist de Verificación
 
 ### Pre-Despliegue
 - [ ] Hardware cumple requisitos (16+ cores, 64GB+ RAM, 4TB+ SSD)
@@ -889,7 +889,7 @@ EOF
 
 ---
 
-## 🎯 Métricas de Éxito
+## Métricas de Éxito
 
 ### KPIs Institucionales
 - **Uptime**: ≥ 99.9%

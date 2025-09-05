@@ -3,7 +3,7 @@
 
 ---
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 1. [Objetivo Institucional](#objetivo-institucional)
 2. [Infraestructura Mínima](#infraestructura-mínima)
@@ -16,7 +16,7 @@
 
 ---
 
-## 🎯 Objetivo Institucional
+## Objetivo Institucional
 
 ### Misión
 Transformar SEEDNodes de un equipo técnico a un **operador institucional de nodos** en LATAM, con procesos autónomos, auditables y predictivos.
@@ -37,7 +37,7 @@ Ser reconocidos como **pioneros en automatización de nodos** con estándares in
 
 ---
 
-## 🏗️ Infraestructura Mínima
+## Infraestructura Mínima
 
 ### Requisitos de Hardware
 
@@ -85,7 +85,7 @@ Ser reconocidos como **pioneros en automatización de nodos** con estándares in
 
 ---
 
-## ⚙️ Procedimientos Operativos
+## Procedimientos Operativos
 
 ### 1. Bootstrap (Configuración Inicial)
 
@@ -208,7 +208,7 @@ make deploy-aztec
 
 ---
 
-## 🛡️ Seguridad & Compliance
+## Seguridad & Compliance
 
 ### Zero Trust Architecture
 
@@ -255,7 +255,7 @@ make deploy-aztec
 
 ---
 
-## 📊 Monitoreo & Reporting
+## Monitoreo & Reporting
 
 ### KPIs Institucionales
 
@@ -301,7 +301,7 @@ make deploy-aztec
 
 ---
 
-## 🔍 Auditorías Integradas
+## Auditorías Integradas
 
 ### Tipos de Auditoría
 
@@ -364,7 +364,7 @@ make deploy-aztec
 
 ---
 
-## 🤖 Agentic NodeOps
+## Agentic NodeOps
 
 ### Evolución de Automatización
 
@@ -456,7 +456,7 @@ make deploy-aztec
 
 ---
 
-## 🏛️ Gobernanza
+## Gobernanza
 
 ### Estructura Organizacional
 
@@ -517,7 +517,7 @@ make deploy-aztec
 
 ---
 
-## 📚 Anexos
+## Anexos
 
 ### A. Glosario de Términos
 - **INOH**: Institutional Node Operations Handbook
