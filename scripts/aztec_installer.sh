@@ -77,9 +77,16 @@ check_requirements() {
         error "This script requires Ubuntu/Debian"
     fi
     
-    # Check if running as root
+    # Check if running as root (allow override with ALLOW_ROOT=yes/true/1)
     if [[ $EUID -eq 0 ]]; then
-        error "Please run as non-root user with sudo privileges"
+        case "${ALLOW_ROOT,,}" in
+            yes|true|1|y)
+                log "Running as root with ALLOW_ROOT enabled. Proceed with caution."
+                ;;
+            *)
+                error "Please run as non-root user with sudo privileges or set ALLOW_ROOT=yes to proceed as root"
+                ;;
+        esac
     fi
     
     # Check available disk space (minimum 250GB)
