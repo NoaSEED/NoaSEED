@@ -1,12 +1,35 @@
-# SEEDNodes - NodeOps Institucionales
-
 <div align="center">
-  <img src="assets/seednodes-hero.svg" alt="SEEDNodes - NodeOps Institucionales" width="600"/>
+
+# SEEDNodes
+
+**NodeOps Institucionales**
+
+```
+███████╗███████╗███████╗██████╗ ███╗   ██╗ ██████╗ ██████╗ ███████╗███████╗
+██╔════╝██╔════╝██╔════╝██╔══██╗████╗  ██║██╔═══██╗██╔══██╗██╔════╝██╔════╝
+███████╗█████╗  █████╗  ██║  ██║██╔██╗ ██║██║   ██║██║  ██║█████╗  ███████╗
+╚════██║██╔══╝  ██╔══╝  ██║  ██║██║╚██╗██║██║   ██║██║  ██║██╔══╝  ╚════██║
+███████║███████╗███████╗██████╔╝██║ ╚████║╚██████╔╝██████╔╝███████╗███████║
+╚══════╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝
+```
+
 </div>
 
-## Objetivo Institucional
+Somos un equipo de desarrolladores y operadores de infraestructura blockchain con un objetivo común: operar nodos y validadores con estándares institucionales. La infraestructura blockchain necesita ser más confiable, y estamos aquí para hacerla mejor.
 
-SEEDNodes opera infraestructura de nodos blockchain con estándares institucionales. Desarrollamos procesos automatizados, auditables y escalables para operación de validadores en múltiples redes, estableciendo mejores prácticas para la industria en LATAM.
+Nuestra misión es desarrollar, implementar y mantener infraestructura de nodos blockchain con procesos automatizados, auditables y escalables. Nos comprometemos a operar con los más altos estándares de seguridad, transparencia y continuidad.
+
+Operamos validadores en las redes más relevantes de web3, incluyendo Ethereum, Gnosis, Starknet, y más.
+
+---
+
+<div align="center">
+
+[![Twitter](https://img.shields.io/badge/Twitter-@SeedsPuntoEth-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/SeedsPuntoEth)
+[![NodeOps](https://img.shields.io/badge/NodeOps-Institucionales-00ff88?style=for-the-badge&logo=ethereum&logoColor=black)](https://github.com/NoaSEED/seedops-institutional)
+[![Blockchain](https://img.shields.io/badge/Blockchain-Validators-ff6b35?style=for-the-badge&logo=bitcoin&logoColor=white)](https://github.com/NoaSEED/seedops-institutional)
+
+</div>
 
 ## Estructura del Proyecto
 

@@ -1,4 +1,11 @@
 <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-weight: bold; }
+      .subtitle { font-family: Arial, sans-serif; }
+    </style>
+  </defs>
+  
   <!-- Fondo negro -->
   <rect width="800" height="400" fill="#000000"/>
   
@@ -54,15 +61,14 @@
   
   <!-- Texto SEEDNodes -->
   <text x="400" y="320" 
-        font-family="Arial, sans-serif" 
+        class="title"
         font-size="48" 
-        font-weight="bold" 
         fill="#00ff88" 
         text-anchor="middle">SEEDNODES</text>
   
   <!-- Subtítulo -->
   <text x="400" y="350" 
-        font-family="Arial, sans-serif" 
+        class="subtitle"
         font-size="18" 
         fill="#888888" 
         text-anchor="middle">NodeOps Institucionales</text>
