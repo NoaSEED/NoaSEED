@@ -78,3 +78,4 @@ Every operational action at SEEDNodes generates complete audit evidence. Deploym
 ---
 
 For Spanish documentation, see the corresponding `.md` files. This English edition mirrors the same structure and standards with concise technical language.
+

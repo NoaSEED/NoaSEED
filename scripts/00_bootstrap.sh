@@ -1,23 +1,23 @@
 #!/bin/bash
 # SEEDNodes - Bootstrap Script
-# Configuración inicial del sistema para NodeOps Institucionales
+# Initial system configuration for Institutional NodeOps
 
 set -euo pipefail
 
-# Colores para output
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuración
+# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_DIR="$PROJECT_ROOT/logs"
 AUDIT_DIR="$PROJECT_ROOT/audit-logs"
 
-# Función de logging
+# Logging functions
 log() {
     echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"
 }
@@ -34,53 +34,53 @@ info() {
     echo -e "${BLUE}[INFO] $1${NC}"
 }
 
-# Verificar si se ejecuta como root
+# Ensure not running as root
 check_root() {
     if [ "$EUID" -eq 0 ]; then
-        error "No ejecutes esto como root - es peligroso y no necesario"
+        error "Do not run as root — it is unsafe and unnecessary"
         exit 1
     fi
 }
 
-# Verificar sistema operativo
+# Check operating system
 check_os() {
-    log "Verificando sistema operativo..."
+    log "Checking operating system..."
     
     if [ ! -f /etc/os-release ]; then
-        error "No se puede determinar el sistema operativo"
+        error "Unable to determine operating system"
         exit 1
     fi
     
     . /etc/os-release
     
     if [ "$ID" != "ubuntu" ] || [ "$VERSION_ID" != "22.04" ]; then
-        warning "Detecté: $PRETTY_NAME"
-        warning "Probamos todo en Ubuntu 22.04 LTS - otros sistemas pueden tener problemas"
-        read -p "¿Seguir adelante? (y/N): " -n 1 -r
+        warning "Detected: $PRETTY_NAME"
+        warning "We test on Ubuntu 22.04 LTS — other systems may have issues"
+        read -p "Continue anyway? (y/N): " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             exit 1
         fi
     fi
     
-    log "Sistema operativo verificado: $PRETTY_NAME ✅"
+    log "Operating system verified: $PRETTY_NAME ✅"
 }
 
-# Actualizar sistema
+# Update system
 update_system() {
-    log "Actualizando sistema operativo..."
+    log "Updating operating system..."
     
     sudo apt update
     sudo apt upgrade -y
     sudo apt autoremove -y
     sudo apt autoclean
     
-    log "Sistema actualizado ✅"
+    log "System updated ✅"
 }
 
-# Instalar dependencias básicas
+# Install base dependencies
 install_dependencies() {
-    log "Instalando dependencias básicas..."
+    log "Installing base dependencies..."
     
     sudo apt install -y \
         curl \
@@ -106,20 +106,20 @@ install_dependencies() {
         rsync \
         openssh-server
     
-    log "Dependencias básicas instaladas ✅"
+    log "Base dependencies installed ✅"
 }
 
-# Configurar usuario y grupos
+# User and groups setup
 setup_user() {
-    log "Configurando usuario y grupos..."
+    log "Configuring user and groups..."
     
-    # Agregar usuario al grupo docker (se creará después)
+    # Add user to sudo group (docker group added later)
     sudo usermod -aG sudo "$USER"
     
-    # Crear directorio home si no existe
+    # Ensure home bin directory
     mkdir -p "$HOME/.local/bin"
     
-    # Configurar bashrc
+    # Configure bashrc
     if ! grep -q "SEED Org" "$HOME/.bashrc"; then
         cat >> "$HOME/.bashrc" << 'EOF'
 
@@ -128,7 +128,7 @@ export SEEDOPS_ROOT="$HOME/seedops-institutional"
 export PATH="$HOME/.local/bin:$PATH"
 export EDITOR=vim
 
-# Aliases útiles
+# Useful aliases
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
@@ -155,65 +155,63 @@ alias gd='git diff'
 EOF
     fi
     
-    log "Usuario configurado ✅"
+    log "User configured ✅"
 }
 
-# Instalar Docker
+# Install Docker
 install_docker() {
-    log "Instalando Docker..."
+    log "Installing Docker..."
     
-    # Verificar si Docker ya está instalado
+    # Skip if Docker exists
     if command -v docker &> /dev/null; then
-        info "Docker ya está instalado: $(docker --version)"
+        info "Docker already installed: $(docker --version)"
         return 0
     fi
     
-    # Agregar clave GPG de Docker
+    # Docker GPG key
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     
-    # Agregar repositorio de Docker
+    # Docker repo
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     
-    # Actualizar e instalar Docker
+    # Install
     sudo apt update
     sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
     
-    # Agregar usuario al grupo docker
+    # Group
     sudo usermod -aG docker "$USER"
     
-    # Habilitar Docker al inicio
+    # Enable & start
     sudo systemctl enable docker
     sudo systemctl start docker
     
-    log "Docker instalado ✅"
-    warning "Reinicia la sesión para que los cambios de grupo surtan efecto"
+    log "Docker installed ✅"
+    warning "Re-login required for group changes to take effect"
 }
 
-# Instalar Docker Compose
+# Install Docker Compose
 install_docker_compose() {
-    log "Instalando Docker Compose..."
+    log "Installing Docker Compose..."
     
-    # Verificar si Docker Compose ya está instalado
     if command -v docker-compose &> /dev/null; then
-        info "Docker Compose ya está instalado: $(docker-compose --version)"
+        info "Docker Compose already installed: $(docker-compose --version)"
         return 0
     fi
     
-    # Instalar Docker Compose
     sudo apt install -y docker-compose
     
-    log "Docker Compose instalado ✅"
+    log "Docker Compose installed ✅"
 }
 
-# Instalar herramientas adicionales
+# Additional tools
 install_additional_tools() {
-    log "Instalando herramientas adicionales..."
+    log "Installing additional tools..."
     
-    # Instalar Node.js (para herramientas de desarrollo)
+    # Node.js
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
     sudo apt install -y nodejs
     
-    # Instalar herramientas de monitoreo
+    # Monitoring tools
     sudo apt install -y \
         prometheus-node-exporter \
         htop \
@@ -221,48 +219,43 @@ install_additional_tools() {
         nethogs \
         ncdu
     
-    # Instalar herramientas de red
+    # Networking tools
     sudo apt install -y \
         netcat \
         nmap \
         tcpdump \
         wireshark-common
     
-    log "Herramientas adicionales instaladas ✅"
+    log "Additional tools installed ✅"
 }
 
-# Configurar directorios del proyecto
+# Project directories
 setup_directories() {
-    log "Configurando directorios del proyecto..."
+    log "Configuring project directories..."
     
-    # Crear directorios necesarios
     mkdir -p "$PROJECT_ROOT"/{data,logs,backups,monitoring/{grafana/{dashboards,datasources},prometheus},templates,compose,env}
     
-    # Crear directorio de auditoría
     mkdir -p "$AUDIT_DIR"
     
-    # Configurar permisos
     chmod 755 "$PROJECT_ROOT"
     chmod 755 "$LOG_DIR"
     chmod 755 "$AUDIT_DIR"
     
-    log "Directorios configurados ✅"
+    log "Directories configured ✅"
 }
 
-# Configurar SSH
+# SSH
 setup_ssh() {
-    log "Configurando SSH..."
+    log "Configuring SSH..."
     
-    # Verificar si SSH está instalado
     if ! systemctl is-active --quiet ssh; then
         sudo systemctl enable ssh
         sudo systemctl start ssh
     fi
     
-    # Configurar SSH para mayor seguridad
     sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
     
-    # Configuración de seguridad SSH
+    # SSH hardening
     sudo tee /etc/ssh/sshd_config.d/99-seedops.conf > /dev/null << 'EOF'
 # SEED Org - SSH Security Configuration
 Port 22
@@ -279,46 +272,40 @@ X11Forwarding no
 AllowUsers seedops
 EOF
     
-    # Reiniciar SSH
     sudo systemctl restart ssh
     
-    log "SSH configurado ✅"
-    warning "Asegúrate de tener configurada tu clave SSH antes de cerrar la sesión"
+    log "SSH configured ✅"
+    warning "Ensure your SSH key is configured before logging out"
 }
 
-# Configurar firewall básico
+# Firewall
 setup_firewall() {
-    log "Configurando firewall básico..."
+    log "Configuring basic firewall..."
     
-    # Habilitar UFW
     sudo ufw --force enable
     
-    # Configurar reglas básicas
     sudo ufw default deny incoming
     sudo ufw default allow outgoing
     
-    # Permitir SSH
     sudo ufw allow ssh
     
-    # Permitir puertos comunes para nodos
+    # Common node ports
     sudo ufw allow 80/tcp   # HTTP
     sudo ufw allow 443/tcp  # HTTPS
-    sudo ufw allow 9545/tcp # RPC (ejemplo)
-    sudo ufw allow 9546/tcp # WebSocket (ejemplo)
+    sudo ufw allow 9545/tcp # RPC (example)
+    sudo ufw allow 9546/tcp # WebSocket (example)
     sudo ufw allow 9090/tcp # Prometheus
     sudo ufw allow 3000/tcp # Grafana
     
-    # Mostrar estado
     sudo ufw status
     
-    log "Firewall configurado ✅"
+    log "Firewall configured ✅"
 }
 
-# Configurar fail2ban
+# fail2ban
 setup_fail2ban() {
-    log "Configurando fail2ban..."
+    log "Configuring fail2ban..."
     
-    # Crear configuración personalizada
     sudo tee /etc/fail2ban/jail.d/seedops.conf > /dev/null << 'EOF'
 # SEED Org - Fail2ban Configuration
 [DEFAULT]
@@ -340,18 +327,16 @@ enabled = false
 enabled = false
 EOF
     
-    # Reiniciar fail2ban
     sudo systemctl enable fail2ban
     sudo systemctl restart fail2ban
     
-    log "Fail2ban configurado ✅"
+    log "fail2ban configured ✅"
 }
 
-# Configurar logrotate
+# logrotate
 setup_logrotate() {
-    log "Configurando logrotate..."
+    log "Configuring logrotate..."
     
-    # Crear configuración para logs de SEED Org
     sudo tee /etc/logrotate.d/seedops > /dev/null << EOF
 # SEED Org - Log Rotation
 $LOG_DIR/*.log {
@@ -363,7 +348,7 @@ $LOG_DIR/*.log {
     notifempty
     create 644 $USER $USER
     postrotate
-        # Reiniciar servicios si es necesario
+        # Restart services if needed
     endscript
 }
 
@@ -378,18 +363,16 @@ $AUDIT_DIR/*.log {
 }
 EOF
     
-    log "Logrotate configurado ✅"
+    log "logrotate configured ✅"
 }
 
-# Configurar Python y herramientas
+# Python tooling
 setup_python() {
-    log "Configurando Python y herramientas..."
+    log "Configuring Python and tools..."
     
-    # Crear entorno virtual
     python3 -m venv "$HOME/.venv/seedops"
     source "$HOME/.venv/seedops/bin/activate"
     
-    # Instalar herramientas Python
     pip install --upgrade pip
     pip install \
         jinja2 \
@@ -399,118 +382,108 @@ setup_python() {
         prometheus-client \
         python-telegram-bot
     
-    # Crear script de activación
     cat > "$HOME/.local/bin/activate-seedops" << 'EOF'
 #!/bin/bash
 source "$HOME/.venv/seedops/bin/activate"
-echo "Entorno SEED Org activado"
+echo "SEED Org environment activated"
 EOF
     
     chmod +x "$HOME/.local/bin/activate-seedops"
     
-    log "Python configurado ✅"
+    log "Python configured ✅"
 }
 
-# Configurar Git
+# Git
 setup_git() {
-    log "Configurando Git..."
+    log "Configuring Git..."
     
-    # Configurar Git globalmente si no está configurado
     if [ -z "$(git config --global user.name)" ]; then
         git config --global user.name "SEEDNodes"
         git config --global user.email "ops@seedlatam.org"
     fi
     
-    # Configurar rama por defecto
     git config --global init.defaultBranch main
-    
-    # Configurar colores
     git config --global color.ui auto
-    
-    # Configurar editor
     git config --global core.editor vim
     
-    log "Git configurado ✅"
+    log "Git configured ✅"
 }
 
-# Crear archivos de configuración base
+# Base configs
 create_base_configs() {
-    log "Creando archivos de configuración base..."
+    log "Creating base configuration files..."
     
-    # Crear Makefile
     cat > "$PROJECT_ROOT/Makefile" << 'EOF'
 # SEEDNodes - NodeOps Makefile
 
 .PHONY: help bootstrap harden deploy monitor backup incident clean
 
-help: ## Mostrar ayuda
-	@echo "SEEDNodes - NodeOps Institucionales"
-	@echo "Comandos disponibles:"
+help: ## Show help
+	@echo "SEEDNodes - Institutional NodeOps"
+	@echo "Available commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-bootstrap: ## Configuración inicial del sistema
-	@echo "Ejecutando bootstrap..."
+bootstrap: ## System bootstrap
+	@echo "Running bootstrap..."
 	./scripts/00_bootstrap.sh
 
-harden: ## Aplicar medidas de seguridad
-	@echo "Ejecutando hardening..."
+harden: ## Apply security hardening
+	@echo "Running hardening..."
 	./scripts/10_hardening.sh
 
-deploy: ## Desplegar nodos
-	@echo "Desplegando nodos..."
+deploy: ## Deploy nodes
+	@echo "Deploying nodes..."
 	./scripts/20_deploy.sh
 
-monitor: ## Configurar monitoreo
-	@echo "Configurando monitoreo..."
+monitor: ## Configure monitoring
+	@echo "Configuring monitoring..."
 	./scripts/30_monitoring.sh
 
-backup: ## Ejecutar backup
-	@echo "Ejecutando backup..."
+backup: ## Run backup
+	@echo "Running backup..."
 	./scripts/40_backup.sh
 
-incident: ## Respuesta a incidentes
-	@echo "Ejecutando respuesta a incidentes..."
+incident: ## Incident response
+	@echo "Running incident response..."
 	./scripts/90_incident.sh
 
-clean: ## Limpiar logs y archivos temporales
-	@echo "Limpiando archivos temporales..."
+clean: ## Clean logs and temp files
+	@echo "Cleaning temp files..."
 	find . -name "*.log" -mtime +30 -delete
 	find . -name "*.tmp" -delete
 	docker system prune -f
 EOF
 
-    # Crear archivo de variables de entorno ejemplo
     cat > "$PROJECT_ROOT/env/.env.example" << 'EOF'
-# SEEDNodes - Variables de Entorno
-# Copiar a .env y configurar según necesidades
+# SEEDNodes - Environment Variables
+# Copy to .env and configure as needed
 
-# Configuración general
+# General configuration
 SEEDOPS_ENV=production
 SEEDOPS_NETWORK=mainnet
 SEEDOPS_LOG_LEVEL=info
 
-# Configuración de monitoreo
+# Monitoring configuration
 PROMETHEUS_PORT=9090
 GRAFANA_PORT=3000
 GRAFANA_PASSWORD=changeme
 
-# Configuración de notificaciones
+# Notifications configuration
 TELEGRAM_BOT_TOKEN=your_bot_token
 TELEGRAM_CHAT_ID=your_chat_id
 DISCORD_WEBHOOK_URL=your_webhook_url
 
-# Configuración de backup
+# Backup configuration
 BACKUP_SCHEDULE="0 2 * * *"
 BACKUP_RETENTION_DAYS=30
 BACKUP_REMOTE_URL=s3://your-backup-bucket
 
-# Configuración de seguridad
+# Security configuration
 SSH_PORT=22
 UFW_ENABLED=true
 FAIL2BAN_ENABLED=true
 EOF
 
-    # Crear archivo de configuración de monitoreo
     cat > "$PROJECT_ROOT/monitoring/prometheus.yml" << 'EOF'
 # SEEDNodes - Prometheus Configuration
 global:
@@ -530,12 +503,12 @@ scrape_configs:
       - targets: ['localhost:9100']
 EOF
 
-    log "Archivos de configuración base creados ✅"
+    log "Base configuration files created ✅"
 }
 
-# Generar log de auditoría
+# Audit log
 generate_audit_log() {
-    log "Generando log de auditoría..."
+    log "Generating audit log..."
     
     AUDIT_LOG="$AUDIT_DIR/bootstrap-$(date +%Y%m%d-%H%M%S).log"
     
@@ -572,13 +545,13 @@ $(find "$PROJECT_ROOT" -type d | sort)
 4. Deploy nodes
 5. Configure monitoring
 EOF
-
-    log "Log de auditoría generado: $AUDIT_LOG ✅"
+    
+    log "Audit log generated: $AUDIT_LOG ✅"
 }
 
-# Función principal
+# Main
 main() {
-    log "🚀 Iniciando bootstrap de SEEDNodes NodeOps..."
+    log "🚀 Starting SEEDNodes NodeOps bootstrap..."
     
     check_root
     check_os
@@ -598,21 +571,21 @@ main() {
     create_base_configs
     generate_audit_log
     
-    log "✅ Bootstrap completado exitosamente!"
+    log "✅ Bootstrap completed successfully!"
     log ""
-    log "📋 Próximos pasos:"
-    log "1. Reinicia la sesión para aplicar cambios de grupo"
-    log "2. Configura tu clave SSH"
-    log "3. Copia env/.env.example a env/.env y configura"
-    log "4. Ejecuta: make harden"
-    log "5. Ejecuta: make deploy"
+    log "📋 Next steps:"
+    log "1. Re-login to apply group changes"
+    log "2. Configure your SSH key"
+    log "3. Copy env/.env.example to env/.env and configure"
+    log "4. Run: make harden"
+    log "5. Run: make deploy"
     log ""
-    log "📚 Documentación: INOH/institutional-handbook.md"
-    log "🔧 Comandos disponibles: make help"
+    log "📚 Documentation: INOH/institutional-handbook.en.md"
+    log "🔧 Available commands: make help"
     log ""
-    warning "IMPORTANTE: Reinicia la sesión antes de continuar"
+    warning "IMPORTANT: Re-login before continuing"
 }
 
-# Ejecutar función principal
+# Execute
 main "$@"
 

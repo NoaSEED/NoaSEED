@@ -1,5 +1,5 @@
 # SEEDNodes - Docker Compose para Gnosis Chain
-# Configuración para 108 validadores
+# Configuration for 108 validators
 
 version: '3.8'
 

@@ -1,5 +1,5 @@
 # SEEDNodes - Docker Compose para Ethereum
-# Configuración con Obol DVT y CSM
+# Configuration with Obol DVT and CSM
 
 version: '3.8'
 
@@ -218,3 +218,4 @@ networks:
     ipam:
       config:
         - subnet: 172.21.0.0/16
+

@@ -75,3 +75,4 @@ P0–P3 runbooks: check status, inspect logs, restart, re‑sync if needed, noti
 
 ## Verification Checklist
 Pre‑deploy (HW/OS, Docker, env, funded wallet, network). Post‑deploy (running, syncing, ports open, monitoring set, backups scheduled). Continuous (SLA, resources, clean logs, alerts active).
+

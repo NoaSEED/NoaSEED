@@ -23,3 +23,4 @@ Deploy validators on Ethereum using Obol DVT and Consensus Client Management wit
 
 ## Verification Checklist
 - Keys protected, slashing DB initialized, peers stable, duties executing, dashboards green
+
