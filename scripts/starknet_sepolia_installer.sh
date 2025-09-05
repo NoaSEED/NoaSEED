@@ -53,7 +53,7 @@ update_system() {
 
 install_packages() {
   progress "Installing base packages"
-  sudo apt-get install -y curl jq git ufw ca-certificates gnupg lsb-release
+  sudo apt-get install -y curl jq git ufw ca-certificates gnupg lsb-release wget
 }
 
 install_docker() {
@@ -82,8 +82,8 @@ configure_firewall() {
   sudo ufw allow ssh || true
   # Pathfinder default HTTP RPC
   sudo ufw allow 9545 || true
-  # Metrics (optional)
-  sudo ufw allow 9090 || true
+  # Metrics (Prometheus scrape)
+  sudo ufw allow 9187 || true
   sudo ufw --force enable || true
   sudo ufw reload || true
 }
@@ -96,6 +96,8 @@ collect_inputs() {
   DATA_DIR=${DATA_DIR:-/var/lib/pathfinder}
   read -p "Expose HTTP RPC port (default: 9545): " RPC_PORT
   RPC_PORT=${RPC_PORT:-9545}
+  read -p "Enable monitoring stack (Prometheus+Grafana)? [Y/n]: " MON
+  MON=${MON:-Y}
 }
 
 prepare_dirs() {
@@ -104,6 +106,7 @@ prepare_dirs() {
   sudo chown -R "$USER":"$USER" "$DATA_DIR"
   mkdir -p "$PWD/compose"
   mkdir -p "$PWD/env"
+  mkdir -p "$PWD/monitoring/grafana/dashboards" "$PWD/monitoring/grafana/datasources"
 }
 
 write_env() {
@@ -113,6 +116,67 @@ write_env() {
 ETHEREUM_RPC_URL=${ETH_RPC}
 PATHFINDER_DATA_DIR=${DATA_DIR}
 RPC_PORT=${RPC_PORT}
+METRICS_PORT=9187
+EOF
+}
+
+write_monitoring_configs() {
+  progress "Writing Prometheus/Grafana configs"
+  # Prometheus config
+  cat > monitoring/prometheus-starknet.yml << 'EOF'
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'starknet_pathfinder'
+    static_configs:
+      - targets: ['pathfinder:9187']
+EOF
+
+  # Grafana datasource
+  mkdir -p monitoring/grafana/datasources
+  cat > monitoring/grafana/datasources/datasource.yml << 'EOF'
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+EOF
+
+  # Grafana dashboard (minimal up panel)
+  mkdir -p monitoring/grafana/dashboards
+  cat > monitoring/grafana/dashboards/starknet-up.json << 'EOF'
+{
+  "annotations": {"list": []},
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Pathfinder UP",
+      "targets": [{"expr": "up{job=\"starknet_pathfinder\"}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "none"}},
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+    }
+  ],
+  "schemaVersion": 38,
+  "title": "Starknet Pathfinder",
+  "version": 1
+}
+EOF
+
+  # Grafana dashboards provisioning
+  cat > monitoring/grafana/dashboards/dashboards.yml << 'EOF'
+apiVersion: 1
+providers:
+  - name: 'starknet'
+    orgId: 1
+    type: file
+    disableDeletion: true
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
 EOF
 }
 
@@ -131,26 +195,55 @@ services:
       - ${PATHFINDER_DATA_DIR}:/usr/share/pathfinder/data
     ports:
       - "${RPC_PORT}:9545"
-      - "9090:9090"
+      - "9187:9187"
     command: >
       pathfinder \
       --network sepolia \
       --ethereum.url ${ETHEREUM_RPC_URL} \
       --http-rpc 0.0.0.0:9545 \
-      --monitoring 0.0.0.0:9090
+      --monitoring 0.0.0.0:9187
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9545/health"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: starknet-prometheus
+    restart: unless-stopped
+    volumes:
+      - ../monitoring/prometheus-starknet.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: starknet-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ../monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - ../monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    ports:
+      - "3000:3000"
+    profiles:
+      - monitoring
 EOF
 }
 
 start_node() {
   progress "Starting Starknet Sepolia (Pathfinder)"
   set -a; source env/starknet-sepolia.env; set +a
-  docker compose -f compose/starknet-sepolia.docker-compose.yml up -d
+  if [[ "${MON^^}" == "Y" ]]; then
+    docker compose -f compose/starknet-sepolia.docker-compose.yml --profile monitoring up -d
+  else
+    docker compose -f compose/starknet-sepolia.docker-compose.yml up -d pathfinder
+  fi
   sleep 5
   docker compose -f compose/starknet-sepolia.docker-compose.yml ps
 }
@@ -162,7 +255,9 @@ final_info() {
   echo "  • Status:      docker compose -f compose/starknet-sepolia.docker-compose.yml ps"
   echo "  • Stop:        docker compose -f compose/starknet-sepolia.docker-compose.yml down"
   echo "  • HTTP RPC:    http://<server-ip>:${RPC_PORT}"
-  echo "  • Metrics:     http://<server-ip>:9090 (if enabled)"
+  echo "  • Metrics:     http://<server-ip>:9187 (Prometheus scrape)"
+  echo "  • Prometheus:  http://<server-ip>:9090"
+  echo "  • Grafana:     http://<server-ip>:3000 (admin/admin by default)"
   echo ""
   echo -e "${YELLOW}Purpose: Bitcoin Pool Integration (per guide).${NC}"
   log "Done"
@@ -181,6 +276,7 @@ main() {
   collect_inputs
   prepare_dirs
   write_env
+  write_monitoring_configs
   write_compose
   start_node
   final_info

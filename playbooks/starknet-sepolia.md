@@ -16,17 +16,14 @@ Fuente de referencia: [Starknet Sepolia - Notion](https://www.notion.so/Starknet
 - Disco: 250 GB SSD+
 - OS: Ubuntu 22.04 LTS
 - Red: 25 Mbps+
-- Puertos: 9545 (HTTP RPC), 9090 (métricas, opcional), 22 (SSH)
+- Puertos: 9545 (HTTP RPC), 9187 (métricas PathFinder), 9090 (Prometheus), 3000 (Grafana), 22 (SSH)
 
 ---
 
 ## Instalación Automatizada
 ```bash
-# 1) Clonar y entrar al repo
 git clone https://github.com/NoaSEED/seedops-institutional.git
 cd seedops-institutional
-
-# 2) Dar permisos y ejecutar el instalador
 chmod +x scripts/starknet_sepolia_installer.sh
 ./scripts/starknet_sepolia_installer.sh
 ```
@@ -34,6 +31,7 @@ El instalador solicita:
 - Ethereum Sepolia RPC (por ejemplo, Infura/Alchemy)
 - Directorio de datos (default: /var/lib/pathfinder)
 - Puerto HTTP RPC (default: 9545)
+- Activar o no el stack de monitoreo (Prometheus + Grafana)
 
 ---
 
@@ -43,7 +41,8 @@ El instalador solicita:
 - Configura UFW con los puertos necesarios
 - Genera `env/starknet-sepolia.env`
 - Genera `compose/starknet-sepolia.docker-compose.yml`
-- Levanta el contenedor `eqlabs/pathfinder:latest` en red Sepolia
+- Genera `monitoring/prometheus-starknet.yml` y provisioning de Grafana
+- Levanta `pathfinder` (y opcionalmente `prometheus` + `grafana`)
 
 ---
 
@@ -59,14 +58,17 @@ docker compose -f compose/starknet-sepolia.docker-compose.yml ps
 docker compose -f compose/starknet-sepolia.docker-compose.yml down
 ```
 
-HTTP RPC: http://<server-ip>:9545  
-Métricas: http://<server-ip>:9090
+- HTTP RPC: http://<server-ip>:9545  
+- Métricas (scrape): http://<server-ip>:9187  
+- Prometheus: http://<server-ip>:9090  
+- Grafana: http://<server-ip>:3000 (admin/admin por defecto)
 
 ---
 
-## Verificación
-- Confirmar que el RPC responde en el puerto configurado (9545 por defecto)
-- Revisar logs para sincronización y ausencia de errores críticos
+## Monitoreo
+- Prometheus `starknet_pathfinder` scraping a `pathfinder:9187`.
+- Dashboard básico en Grafana: “Starknet Pathfinder” con panel `up`.
+- Puedes añadir queries adicionales: latencia RPC, tiempo de respuesta, uso de CPU/memoria (via node exporter si se integra).
 
 ---
 
@@ -76,7 +78,7 @@ Métricas: http://<server-ip>:9090
 docker compose -f compose/starknet-sepolia.docker-compose.yml pull
 docker compose -f compose/starknet-sepolia.docker-compose.yml up -d
 ```
-- Backup de datos: respaldar el directorio de datos definido (default `/var/lib/pathfinder`).
+- Backup de datos: respaldar el directorio de datos (default `/var/lib/pathfinder`).
 
 ---
 
