@@ -13,6 +13,8 @@
 ╚══════╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝
 ```
 
+[English version](README.en.md)
+
 </div>
 
 Somos un equipo de desarrolladores y operadores de infraestructura blockchain con un objetivo común: operar nodos y validadores con estándares institucionales. La infraestructura blockchain necesita ser más confiable, y estamos aquí para hacerla mejor.
