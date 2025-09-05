@@ -26,8 +26,7 @@ Operamos validadores en las redes más relevantes de web3, incluyendo Ethereum, 
 <div align="center">
 
 [![Twitter](https://img.shields.io/badge/Twitter-@SeedsPuntoEth-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/SeedsPuntoEth)
-[![NodeOps](https://img.shields.io/badge/NodeOps-Institucionales-00ff88?style=for-the-badge&logo=ethereum&logoColor=black)](https://github.com/NoaSEED/seedops-institutional)
-[![Blockchain](https://img.shields.io/badge/Blockchain-Validators-ff6b35?style=for-the-badge&logo=bitcoin&logoColor=white)](https://github.com/NoaSEED/seedops-institutional)
+[![NodeOps](https://img.shields.io/badge/NodeOps-Institucionales-00ff88?style=for-the-badge&logo=server&logoColor=black)](https://github.com/NoaSEED/seedops-institutional)
 
 </div>
 
