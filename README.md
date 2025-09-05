@@ -1,19 +1,19 @@
 <div align="center">
-  <img src="assets/seednodes-hero.svg" alt="SEEDNodes - NodeOps Institucionales" width="600"/>
+  <img src="assets/seednodes-hero.svg" alt="SEEDNodes - Institutional NodeOps" width="600"/>
 </div>
 
-Somos un equipo de desarrolladores y operadores de infraestructura blockchain con un objetivo común: operar nodos y validadores con estándares institucionales. La infraestructura blockchain necesita ser más confiable, y estamos aquí para hacerla mejor.
+We are a team of blockchain infrastructure engineers and operators with a single goal: to run nodes and validators to institutional standards. Blockchain infrastructure must be more reliable—and we are here to make it better.
 
-Nuestra misión es desarrollar, implementar y mantener infraestructura de nodos blockchain con procesos automatizados, auditables y escalables. Nos comprometemos a operar con los más altos estándares de seguridad, transparencia y continuidad.
+Our mission is to design, deploy, and maintain blockchain node infrastructure with automated, auditable, and scalable processes. We operate to the highest standards of security, transparency, and continuity.
 
-Operamos validadores en las redes más relevantes de web3, incluyendo Ethereum, Gnosis, Starknet, Aztec, y más.
+We run validators on leading web3 networks, including Ethereum, Gnosis, Starknet, Aztec, and more.
 
 ---
 
 <div align="center">
 
 [![Twitter](https://img.shields.io/badge/Twitter-@SeedsPuntoEth-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/SeedsPuntoEth)
-[![NodeOps](https://img.shields.io/badge/NodeOps-Institucionales-00ff88?style=for-the-badge&logo=server&logoColor=black)](https://github.com/NoaSEED/seedops-institutional)
+[![NodeOps](https://img.shields.io/badge/NodeOps-Institutional-00ff88?style=for-the-badge&logo=server&logoColor=black)](https://github.com/NoaSEED/seedops-institutional)
 
 </div>
 
