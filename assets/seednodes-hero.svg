@@ -6,37 +6,37 @@
     </style>
   </defs>
   
-  <!-- Fondo negro -->
+  <!-- Black background -->
   <rect width="800" height="400" fill="#000000"/>
   
-  <!-- Círculo principal -->
+  <!-- Main circle -->
   <circle cx="400" cy="200" r="180" fill="#000000" stroke="#00ff88" stroke-width="2"/>
   
-  <!-- Hexágono principal con red interna -->
+  <!-- Main hexagon with internal grid -->
   <g transform="translate(400, 200)">
-    <!-- Hexágono exterior -->
+    <!-- Outer hexagon -->
     <polygon points="0,-120 104,-60 104,60 0,120 -104,60 -104,-60" 
              fill="none" 
              stroke="#00ff88" 
              stroke-width="3"/>
     
-    <!-- Red interna del hexágono -->
+    <!-- Hexagon internal grid -->
     <g stroke="#00ff88" stroke-width="1" fill="none">
-      <!-- Líneas horizontales -->
+      <!-- Horizontal lines -->
       <line x1="-80" y1="-40" x2="80" y2="-40"/>
       <line x1="-80" y1="0" x2="80" y2="0"/>
       <line x1="-80" y1="40" x2="80" y2="40"/>
       
-      <!-- Líneas verticales -->
+      <!-- Vertical lines -->
       <line x1="-40" y1="-80" x2="-40" y2="80"/>
       <line x1="0" y1="-80" x2="0" y2="80"/>
       <line x1="40" y1="-80" x2="40" y2="80"/>
       
-      <!-- Líneas diagonales -->
+      <!-- Diagonal lines -->
       <line x1="-60" y1="-60" x2="60" y2="60"/>
       <line x1="60" y1="-60" x2="-60" y2="60"/>
       
-      <!-- Nodos de la red -->
+      <!-- Network nodes -->
       <circle cx="-60" cy="-60" r="3" fill="#00ff88"/>
       <circle cx="0" cy="-60" r="3" fill="#00ff88"/>
       <circle cx="60" cy="-60" r="3" fill="#00ff88"/>
@@ -48,28 +48,28 @@
       <circle cx="60" cy="60" r="3" fill="#00ff88"/>
     </g>
     
-    <!-- Lupa en la parte inferior izquierda -->
+    <!-- Magnifier bottom-left -->
     <g transform="translate(-60, 40)">
-      <!-- Lente de la lupa -->
+      <!-- Magnifier lens -->
       <circle cx="0" cy="0" r="25" fill="none" stroke="#00ff88" stroke-width="3"/>
       <circle cx="0" cy="0" r="20" fill="#000000"/>
       
-      <!-- Mango de la lupa -->
+      <!-- Magnifier handle -->
       <line x1="15" y1="15" x2="35" y2="35" stroke="#00ff88" stroke-width="4" stroke-linecap="round"/>
     </g>
   </g>
   
-  <!-- Texto SEEDNodes -->
+  <!-- SEEDNodes text -->
   <text x="400" y="320" 
         class="title"
         font-size="48" 
         fill="#00ff88" 
         text-anchor="middle">SEEDNODES</text>
   
-  <!-- Subtítulo -->
+  <!-- Subtitle -->
   <text x="400" y="350" 
         class="subtitle"
         font-size="18" 
         fill="#888888" 
-        text-anchor="middle">NodeOps Institucionales</text>
+        text-anchor="middle">Institutional NodeOps</text>
 </svg>

@@ -1,11 +1,11 @@
 # SEEDNodes - NodeOps .gitignore
 
-# Archivos de configuración sensibles
+# Sensitive configuration files
 .env
 *.env
 !*.env.example
 
-# Logs y archivos temporales
+# Logs and temporary files
 *.log
 logs/
 *.tmp
@@ -16,16 +16,16 @@ backups/
 *.tar.gz
 *.zip
 
-# Datos de nodos
+# Node data
 data/
 *.db
 *.sqlite
 
-# Archivos de auditoría (contienen información sensible)
+# Audit records (may contain sensitive information)
 audit-logs/
 *.audit
 
-# Archivos de sistema
+# System files
 .DS_Store
 Thumbs.db
 *.swp
@@ -57,31 +57,31 @@ yarn-error.log*
 *.sublime-project
 *.sublime-workspace
 
-# Archivos de configuración local
+# Local configuration files
 config/local/
 *.local
 
-# Claves privadas
+# Private keys
 *.key
 *.pem
 *.p12
 *.pfx
 
-# Certificados
+# Certificates
 *.crt
 *.cer
 *.der
 
-# Archivos de configuración de servicios
+# Service configuration files
 systemd/
 *.service
 
-# Archivos de monitoreo temporales
+# Temporary monitoring files
 monitoring/data/
 prometheus_data/
 grafana_data/
 
-# Archivos de test
+# Test files
 test-data/
 *.test
 

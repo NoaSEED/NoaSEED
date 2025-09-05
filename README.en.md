@@ -22,8 +22,7 @@ We run validators on leading web3 networks, including Ethereum, Gnosis, Starknet
 ```
 seedops-institutional/
 ├── INOH/                          # Institutional Node Operations Handbook
-│   ├── institutional-handbook.en.md
-│   └── institutional-handbook.md
+│   └── institutional-handbook.en.md
 ├── playbooks/                     # Technical playbooks per network
 │   ├── ethereum.en.md
 │   ├── gnosis.en.md
