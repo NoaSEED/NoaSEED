@@ -82,12 +82,21 @@ check_requirements() {
         esac
     fi
     
-    # Check available disk space (minimum 250GB)
-    available_space=$(df / | awk 'NR==2 {print $4}')
-    required_space=$((250 * 1024 * 1024)) # 250GB in KB
-    
-    if [[ $available_space -lt $required_space ]]; then
-        error "Insufficient disk space. Minimum 250GB required"
+    # Check available disk space (default minimum 250GB; override with MIN_DISK_GB and ALLOW_LOW_DISK)
+    available_kb=$(df / | awk 'NR==2 {print $4}')
+    available_gb=$((available_kb / 1024 / 1024))
+    min_disk_gb=${MIN_DISK_GB:-250}
+    required_kb=$((min_disk_gb * 1024 * 1024))
+
+    if [[ $available_kb -lt $required_kb ]]; then
+        case "${ALLOW_LOW_DISK,,}" in
+            yes|true|1|y)
+                log "Disk space below ${min_disk_gb}GB (detected: ${available_gb}GB). Proceeding due to ALLOW_LOW_DISK.";
+                ;;
+            *)
+                error "Insufficient disk space. Required ${min_disk_gb}GB; detected ${available_gb}GB. Set MIN_DISK_GB=<value> and ALLOW_LOW_DISK=yes to override for testing."
+                ;;
+        esac
     fi
     
     log "System requirements check passed ✓"
