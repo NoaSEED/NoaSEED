@@ -1,5 +1,9 @@
 # SEEDNodes - NodeOps Institucionales
 
+<div align="center">
+  <img src="assets/seednodes-hero.svg" alt="SEEDNodes - NodeOps Institucionales" width="600"/>
+</div>
+
 ## Objetivo Institucional
 
 SEEDNodes opera infraestructura de nodos blockchain con estándares institucionales. Desarrollamos procesos automatizados, auditables y escalables para operación de validadores en múltiples redes, estableciendo mejores prácticas para la industria en LATAM.
