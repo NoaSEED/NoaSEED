@@ -20,7 +20,7 @@ validator:
   metrics_address: "0.0.0.0"
   metrics_port: 9002
   init_slashing_protection: true
-  validator_count: {{ VALIDATOR_COUNT | default(108) }}
+  validator_count: {{ VALIDATOR_COUNT | default(32) }}
 
 logging:
   level: {{ LOG_LEVEL | default('info') }}

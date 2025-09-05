@@ -19,21 +19,21 @@
 ## Objetivo Institucional
 
 ### Misión
-Transformar SEEDNodes de un equipo técnico a un **operador institucional de nodos** en LATAM, con procesos autónomos, auditables y predictivos.
+Operar infraestructura de nodos blockchain con estándares institucionales en LATAM, desarrollando procesos automatizados, auditables y escalables.
 
 ### Visión
-Ser reconocidos como **pioneros en automatización de nodos** con estándares institucionales que garantizan:
+Establecer mejores prácticas para la industria con estándares institucionales que garantizan:
 - **Seguridad**: Zero trust, auditorías continuas
 - **Transparencia**: Trazabilidad completa de operaciones
 - **Confiabilidad**: Uptime ≥ 99.9%, respuesta predictiva
 - **Escalabilidad**: Orquestación multired (Ethereum, Gnosis, Starknet, Aztec)
 
 ### Diferenciadores Institucionales
-1. **Agentic Automation**: Procesos autónomos con AI agents que aprenden y se adaptan
-2. **Audit Trail**: Cada operación genera evidencia verificable - no hay cajas negras
-3. **Predictive Monitoring**: Anticipamos problemas antes de que ocurran
-4. **Multi-Network Hub**: Orquestación centralizada de múltiples redes
-5. **Institutional Compliance**: Estándares KYB/KYC que cumplen regulaciones locales
+1. **Automatización Avanzada**: Procesos autónomos con sistemas que se adaptan
+2. **Audit Trail**: Cada operación genera evidencia verificable
+3. **Monitoreo Predictivo**: Detección temprana de problemas
+4. **Hub Multired**: Orquestación centralizada de múltiples redes
+5. **Compliance Institucional**: Estándares KYB/KYC que cumplen regulaciones locales
 
 ---
 
@@ -79,7 +79,7 @@ Ser reconocidos como **pioneros en automatización de nodos** con estándares in
 | Red | Tipo | Validadores | Sequencers | Estado |
 |-----|------|-------------|------------|--------|
 | **Ethereum** | Obol DVT | ✅ | ❌ | Producción |
-| **Gnosis** | Native | 108 | ❌ | Producción |
+| **Gnosis** | Native | Variable | ❌ | Producción |
 | **Starknet** | Delegación | ✅ | ❌ | Desarrollo |
 | **Aztec** | Native | ✅ | ✅ | Investigación |
 

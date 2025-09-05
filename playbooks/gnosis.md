@@ -1,21 +1,21 @@
-# Playbook Gnosis - 108 Validators
+# Playbook Gnosis - Validators
 ## SEEDNodes - NodeOps Institucionales
 
 ---
 
 ## Objetivo
 
-Configurar y operar 108 validadores en Gnosis Chain, optimizando para máxima eficiencia y uptime ≥ 99.9% con estándares institucionales.
+Configurar y operar validadores en Gnosis Chain, optimizando para máxima eficiencia y uptime ≥ 99.9% con estándares institucionales.
 
 ---
 
 ## Prerequisitos
 
 ### Hardware Mínimo
-- **CPU**: 16+ cores (ARM64/x86_64) - 108 validadores requieren mucho CPU
-- **RAM**: 64GB+ DDR4 - cada validador consume ~500MB
-- **Storage**: 4TB+ NVMe SSD - estado de 108 validadores
-- **Network**: 2Gbps+ simétrico - alta concurrencia de validadores
+- **CPU**: 8+ cores (ARM64/x86_64) - validadores requieren CPU dedicado
+- **RAM**: 32GB+ DDR4 - cada validador consume ~500MB
+- **Storage**: 2TB+ NVMe SSD - estado de validadores
+- **Network**: 1Gbps+ simétrico - concurrencia de validadores
 
 ### Software Requerido
 - **OS**: Ubuntu 22.04 LTS (probado y estable)
@@ -49,9 +49,9 @@ GNOSIS_RPC_URL=https://rpc.gnosischain.com
 GNOSIS_BEACON_URL=https://beacon.gnosischain.com
 
 # Configuración de validadores
-VALIDATOR_COUNT=108
+VALIDATOR_COUNT=32
 VALIDATOR_START_INDEX=0
-VALIDATOR_END_INDEX=107
+VALIDATOR_END_INDEX=31
 
 # Configuración de claves
 VALIDATOR_KEYS_DIR=/opt/gnosis/validator-keys
@@ -483,7 +483,7 @@ main "$@"
 #!/bin/bash
 # scripts/configure_gnosis_validators.sh
 
-# Configurar 108 validadores
+# Configurar validadores
 configure_validators() {
     log "Configurando ${VALIDATOR_COUNT} validadores de Gnosis..."
     
@@ -806,14 +806,14 @@ handle_slashing_risk() {
 
 ## Optimización y Performance
 
-### 1. Tuning del Sistema para 108 Validadores
+### 1. Tuning del Sistema para Validadores
 
 ```bash
 #!/bin/bash
 # scripts/optimize_gnosis.sh
 
 optimize_system() {
-    log "Optimizando sistema para 108 validadores de Gnosis..."
+    log "Optimizando sistema para validadores de Gnosis..."
     
     # Optimizar parámetros de red
     echo 'net.core.rmem_max = 268435456' >> /etc/sysctl.conf
@@ -849,7 +849,7 @@ EOF
     
     systemctl restart docker
     
-    log "Sistema optimizado para 108 validadores ✅"
+    log "Sistema optimizado para validadores ✅"
 }
 ```
 
@@ -858,7 +858,7 @@ EOF
 ## Checklist de Verificación
 
 ### Pre-Despliegue
-- [ ] Hardware cumple requisitos (16+ cores, 64GB+ RAM, 4TB+ SSD)
+- [ ] Hardware cumple requisitos (8+ cores, 32GB+ RAM, 2TB+ SSD)
 - [ ] Sistema operativo actualizado
 - [ ] Docker y Docker Compose instalados
 - [ ] Variables de entorno configuradas
@@ -917,5 +917,5 @@ EOF
 
 ---
 
-*"Este playbook garantiza que cada despliegue de Gnosis en SEEDNodes cumple con estándares institucionales de seguridad, transparencia y continuidad, optimizado para 108 validadores."*
+*"Este playbook garantiza que cada despliegue de Gnosis en SEEDNodes cumple con estándares institucionales de seguridad, transparencia y continuidad."*
 

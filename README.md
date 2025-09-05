@@ -2,7 +2,7 @@
 
 ## Objetivo Institucional
 
-SEEDNodes está evolucionando de simples scripts a **operaciones autónomas con agentes inteligentes**. Nuestros procesos institucionales ahora son auto-ejecutables, auditables y predictivos, posicionándonos como **pioneros en automatización de nodos en LATAM**.
+SEEDNodes opera infraestructura de nodos blockchain con estándares institucionales. Desarrollamos procesos automatizados, auditables y escalables para operación de validadores en múltiples redes, estableciendo mejores prácticas para la industria en LATAM.
 
 ## Estructura del Proyecto
 
@@ -13,9 +13,9 @@ seedops-institutional/
 │   ├── security-compliance.md     # Estándares de seguridad
 │   └── audit-procedures.md        # Procedimientos de auditoría
 ├── playbooks/                     # Playbooks técnicos por red
-│   ├── ethereum.md               # Obol DVT, CSM ✅
-│   ├── gnosis.md                 # 108 validators ✅
-│   ├── starknet.md               # Delegación STRK ✅
+│   ├── ethereum.md               # Obol DVT, CSM
+│   ├── gnosis.md                 # Validators
+│   ├── starknet.md               # Delegación STRK
 │   └── aztec.md                  # Validators + sequencers
 ├── scripts/                      # Scripts de automatización
 │   ├── 00_bootstrap.sh           # Configuración inicial
@@ -46,7 +46,7 @@ seedops-institutional/
 
 ### Fase 3: Playbooks por Red
 - [x] Ethereum (Obol DVT, CSM)
-- [x] Gnosis (108 validators)
+- [x] Gnosis (validators)
 - [x] Starknet (delegación STRK)
 - [ ] Aztec (validators + sequencers)
 
@@ -70,33 +70,33 @@ seedops-institutional/
 - [ ] Actualización de guías
 - [ ] Lessons learned
 
-## Evolución hacia Agentic NodeOps
+## Automatización de NodeOps
 
-### Base Actual
-- Scripts para: bootstrap, hardening, deploy, monitor, backup, incident
-- Playbooks documentados (INOH) → replicables y versionados
-- Manualidad: alguien del equipo ejecuta `make deploy`, `make monitor`, etc.
+### Implementación Actual
+- Scripts automatizados para bootstrap, hardening, deploy, monitor, backup, incident
+- Playbooks documentados y versionados para replicabilidad
+- Procesos manuales controlados con `make deploy`, `make monitor`, etc.
 
-### Capa de Agentic AI
-- **Seguridad**: Agent detecta puerto abierto → ejecuta hardening → documenta
-- **Backups**: Automatizados, encriptados, verificados a diario
-- **Incidentes**: Auto-ejecuta, reinicia, notifica y documenta
+### Automatización Avanzada
+- **Seguridad**: Detección automática de vulnerabilidades y aplicación de hardening
+- **Backups**: Procesos automatizados con encriptación y verificación diaria
+- **Incidentes**: Respuesta automática, reinicio de servicios y notificaciones
 
 ### Orquestación Multired
-- Hub único para Ethereum, Gnosis, Starknet, Aztec
-- Pipeline CI/CD institucional
-- Seguridad centralizada
+- Gestión centralizada para Ethereum, Gnosis, Starknet, Aztec
+- Pipeline CI/CD para despliegues institucionales
+- Seguridad y monitoreo unificados
 
-### Capa Predictiva
-- Predicción de recursos (disco, CPU, memoria)
-- Anticipación de amenazas de seguridad
-- Auto-escalado preventivo
+### Monitoreo Predictivo
+- Análisis de tendencias de recursos (disco, CPU, memoria)
+- Detección temprana de amenazas de seguridad
+- Escalado automático preventivo
 
 ## Seguridad de Nivel Institucional
 
-- **Zero trust**: VPN + MFA, agents sin claves hardcodeadas
-- **Auditoría**: cada acción del agent logueada en repo "audit-logs"
-- **Red team interno**: playbook de simulación de ataque
+- **Zero trust**: VPN + MFA, sin claves hardcodeadas en procesos
+- **Auditoría**: cada acción logueada en repositorio "audit-logs"
+- **Testing de seguridad**: playbooks de simulación de ataques
 
 ## Auditorías Integradas
 
@@ -108,7 +108,7 @@ Cada proceso genera **registro verificable**:
 
 ## Resultado Final
 
-> "En SEEDNodes, cada proceso operativo está acoplado a un registro de auditoría. Ningún despliegue, actualización o backup se considera válido sin su correspondiente evidencia auditable. Esto garantiza transparencia, trazabilidad y confianza para delegadores, fundaciones y stakeholders."
+Cada proceso operativo en SEEDNodes genera registros de auditoría completos. Los despliegues, actualizaciones y backups requieren evidencia verificable para ser considerados válidos. Esto garantiza transparencia, trazabilidad y confianza para delegadores, fundaciones y stakeholders.
 
 ---
 
