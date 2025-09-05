@@ -84,3 +84,4 @@ grafana_data/
 # Archivos de test
 test-data/
 *.test
+

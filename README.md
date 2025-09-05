@@ -14,8 +14,8 @@ seedops-institutional/
 │   └── audit-procedures.md        # Procedimientos de auditoría
 ├── playbooks/                     # Playbooks técnicos por red
 │   ├── ethereum.md               # Obol DVT, CSM
-│   ├── gnosis.md                 # 108 validators
-│   ├── starknet.md               # Delegación STRK
+│   ├── gnosis.md                 # 108 validators ✅
+│   ├── starknet.md               # Delegación STRK ✅
 │   └── aztec.md                  # Validators + sequencers
 ├── scripts/                      # Scripts de automatización
 │   ├── 00_bootstrap.sh           # Configuración inicial
@@ -46,8 +46,8 @@ seedops-institutional/
 
 ### Fase 3: Playbooks por Red 📋
 - [ ] Ethereum (Obol DVT, CSM)
-- [ ] Gnosis (108 validators)
-- [ ] Starknet (delegación STRK)
+- [x] Gnosis (108 validators) ✅
+- [x] Starknet (delegación STRK) ✅
 - [ ] Aztec (validators + sequencers)
 
 ### Fase 4: Monitoreo & Reporting 📊

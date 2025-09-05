@@ -1,0 +1,53 @@
+# SEEDNodes - Configuración de Gnosis
+# Template generado automáticamente
+
+network: {{ GNOSIS_NETWORK | default('mainnet') }}
+
+beacon:
+  http_address: "0.0.0.0"
+  http_port: 9000
+  metrics_address: "0.0.0.0"
+  metrics_port: 9001
+  checkpoint_sync_url: "{{ GNOSIS_BEACON_URL | default('https://beacon.gnosischain.com') }}"
+  max_peers: {{ LIGHTHOUSE_MAX_PEERS | default(50) }}
+  target_peers: {{ LIGHTHOUSE_TARGET_PEERS | default(25) }}
+  discovery_port: {{ LIGHTHOUSE_DISCOVERY_PORT | default(9000) }}
+
+validator:
+  beacon_nodes: ["http://gnosis-beacon:9000"]
+  validators_dir: "{{ VALIDATOR_KEYS_DIR | default('/opt/gnosis/validator-keys') }}"
+  secrets_dir: "{{ VALIDATOR_KEYS_DIR | default('/opt/gnosis/validator-keys') }}"
+  metrics_address: "0.0.0.0"
+  metrics_port: 9002
+  init_slashing_protection: true
+  validator_count: {{ VALIDATOR_COUNT | default(108) }}
+
+logging:
+  level: {{ LOG_LEVEL | default('info') }}
+  format: {{ LOG_FORMAT | default('json') }}
+
+monitoring:
+  prometheus:
+    enabled: true
+    port: {{ PROMETHEUS_PORT | default(9090) }}
+  grafana:
+    enabled: true
+    port: {{ GRAFANA_PORT | default(3000) }}
+
+backup:
+  schedule: "{{ BACKUP_SCHEDULE | default('0 2 * * *') }}"
+  retention_days: {{ BACKUP_RETENTION_DAYS | default(30) }}
+  remote_url: "{{ BACKUP_REMOTE_URL | default('s3://seedops-backups/gnosis') }}"
+
+security:
+  ssh_port: {{ SSH_PORT | default(22) }}
+  ufw_enabled: {{ UFW_ENABLED | default('true') }}
+  fail2ban_enabled: {{ FAIL2BAN_ENABLED | default('true') }}
+
+notifications:
+  telegram:
+    bot_token: "{{ TELEGRAM_BOT_TOKEN | default('') }}"
+    chat_id: "{{ TELEGRAM_CHAT_ID | default('') }}"
+  discord:
+    webhook_url: "{{ DISCORD_WEBHOOK_URL | default('') }}"
+
