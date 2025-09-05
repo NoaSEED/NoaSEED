@@ -1,8 +1,21 @@
-# SEEDNodes - Institutional NodeOps
+<div align="center">
+  <img src="assets/seednodes-hero.svg" alt="SEEDNodes - Institutional NodeOps" width="600"/>
+</div>
 
-## Purpose
+We are a team of blockchain infrastructure engineers and operators with a single goal: to run nodes and validators to institutional standards. Blockchain infrastructure must be more reliable—and we are here to make it better.
 
-SEEDNodes operates blockchain node infrastructure to institutional standards. We build automated, auditable, and scalable processes to run validators across multiple networks, establishing best practices for the industry in LATAM.
+Our mission is to design, deploy, and maintain blockchain node infrastructure with automated, auditable, and scalable processes. We operate to the highest standards of security, transparency, and continuity.
+
+We run validators on leading web3 networks, including Ethereum, Gnosis, Starknet, Aztec, and more.
+
+---
+
+<div align="center">
+
+[![Twitter](https://img.shields.io/badge/Twitter-@SeedsPuntoEth-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/SeedsPuntoEth)
+[![NodeOps](https://img.shields.io/badge/NodeOps-Institutional-00ff88?style=for-the-badge&logo=server&logoColor=black)](https://github.com/NoaSEED/seedops-institutional)
+
+</div>
 
 ## Project Structure
 
