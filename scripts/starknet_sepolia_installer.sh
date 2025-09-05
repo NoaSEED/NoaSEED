@@ -84,6 +84,8 @@ configure_firewall() {
   sudo ufw allow 9545 || true
   # Metrics (Prometheus scrape)
   sudo ufw allow 9187 || true
+  # Node exporter
+  sudo ufw allow 9100 || true
   sudo ufw --force enable || true
   sudo ufw reload || true
 }
@@ -96,7 +98,7 @@ collect_inputs() {
   DATA_DIR=${DATA_DIR:-/var/lib/pathfinder}
   read -p "Expose HTTP RPC port (default: 9545): " RPC_PORT
   RPC_PORT=${RPC_PORT:-9545}
-  read -p "Enable monitoring stack (Prometheus+Grafana)? [Y/n]: " MON
+  read -p "Enable monitoring stack (Prometheus+Grafana+NodeExporter)? [Y/n]: " MON
   MON=${MON:-Y}
 }
 
@@ -117,6 +119,7 @@ ETHEREUM_RPC_URL=${ETH_RPC}
 PATHFINDER_DATA_DIR=${DATA_DIR}
 RPC_PORT=${RPC_PORT}
 METRICS_PORT=9187
+NODE_EXPORTER_PORT=9100
 EOF
 }
 
@@ -131,6 +134,9 @@ scrape_configs:
   - job_name: 'starknet_pathfinder'
     static_configs:
       - targets: ['pathfinder:9187']
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
 EOF
 
   # Grafana datasource
@@ -146,22 +152,18 @@ datasources:
     isDefault: true
 EOF
 
-  # Grafana dashboard (minimal up panel)
+  # Grafana dashboards (up + basic resources)
   mkdir -p monitoring/grafana/dashboards
   cat > monitoring/grafana/dashboards/starknet-up.json << 'EOF'
 {
   "annotations": {"list": []},
   "panels": [
-    {
-      "type": "stat",
-      "title": "Pathfinder UP",
-      "targets": [{"expr": "up{job=\"starknet_pathfinder\"}", "refId": "A"}],
-      "fieldConfig": {"defaults": {"unit": "none"}},
-      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
-    }
+    {"type": "stat","title": "Pathfinder UP","targets": [{"expr": "up{job=\"starknet_pathfinder\"}","refId": "A"}],"gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}},
+    {"type": "graph","title": "CPU %","targets": [{"expr": "100 - (avg by(instance)(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)","refId": "B"}],"gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}},
+    {"type": "graph","title": "Memory Used %","targets": [{"expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100","refId": "C"}],"gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}}
   ],
   "schemaVersion": 38,
-  "title": "Starknet Pathfinder",
+  "title": "Starknet Pathfinder + Host",
   "version": 1
 }
 EOF
@@ -208,6 +210,19 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: starknet-node-exporter
+    restart: unless-stopped
+    pid: "host"
+    network_mode: host
+    command:
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro,rslave
+    profiles:
+      - monitoring
 
   prometheus:
     image: prom/prometheus:latest

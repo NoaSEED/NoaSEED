@@ -16,7 +16,7 @@ Fuente de referencia: [Starknet Sepolia - Notion](https://www.notion.so/Starknet
 - Disco: 250 GB SSD+
 - OS: Ubuntu 22.04 LTS
 - Red: 25 Mbps+
-- Puertos: 9545 (HTTP RPC), 9187 (métricas PathFinder), 9090 (Prometheus), 3000 (Grafana), 22 (SSH)
+- Puertos: 9545 (HTTP RPC), 9187 (métricas PathFinder), 9090 (Prometheus), 3000 (Grafana), 9100 (Node Exporter), 22 (SSH)
 
 ---
 
@@ -31,18 +31,18 @@ El instalador solicita:
 - Ethereum Sepolia RPC (por ejemplo, Infura/Alchemy)
 - Directorio de datos (default: /var/lib/pathfinder)
 - Puerto HTTP RPC (default: 9545)
-- Activar o no el stack de monitoreo (Prometheus + Grafana)
+- Activar o no el stack de monitoreo (Prometheus + Grafana + Node Exporter)
 
 ---
 
 ## Qué hace el instalador
 - Actualiza paquetes y dependencias
 - Instala Docker + Docker Compose
-- Configura UFW con los puertos necesarios
+- Configura UFW con los puertos necesarios (9545/9187/9090/3000/9100)
 - Genera `env/starknet-sepolia.env`
 - Genera `compose/starknet-sepolia.docker-compose.yml`
 - Genera `monitoring/prometheus-starknet.yml` y provisioning de Grafana
-- Levanta `pathfinder` (y opcionalmente `prometheus` + `grafana`)
+- Levanta `pathfinder` (y opcionalmente `prometheus` + `grafana` + `node-exporter`)
 
 ---
 
@@ -67,8 +67,10 @@ docker compose -f compose/starknet-sepolia.docker-compose.yml down
 
 ## Monitoreo
 - Prometheus `starknet_pathfinder` scraping a `pathfinder:9187`.
-- Dashboard básico en Grafana: “Starknet Pathfinder” con panel `up`.
-- Puedes añadir queries adicionales: latencia RPC, tiempo de respuesta, uso de CPU/memoria (via node exporter si se integra).
+- Prometheus `node_exporter` scraping a `node-exporter:9100`.
+- Dashboards Grafana:
+  - “Starknet Pathfinder + Host”: estado `up`, CPU %, Memory %.
+  - Puedes añadir paneles para disco, red y latencias RPC.
 
 ---
 
