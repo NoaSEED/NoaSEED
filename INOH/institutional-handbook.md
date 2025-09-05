@@ -12,7 +12,6 @@
 5. [Monitoreo & Reporting](#monitoreo--reporting)
 6. [Auditorías Integradas](#auditorías-integradas)
 7. [Agentic NodeOps](#agentic-nodeops)
-8. [Gobernanza](#gobernanza)
 
 ---
 
@@ -33,7 +32,7 @@ Establecer mejores prácticas para la industria con estándares institucionales 
 2. **Audit Trail**: Cada operación genera evidencia verificable
 3. **Monitoreo Predictivo**: Detección temprana de problemas
 4. **Hub Multired**: Orquestación centralizada de múltiples redes
-5. **Compliance Institucional**: Estándares KYB/KYC que cumplen regulaciones locales
+5. **Operación Técnica**: Enfoque especializado en validadores y nodos blockchain
 
 ---
 
@@ -135,11 +134,11 @@ make deploy-ethereum
 # - Genera audit log
 ```
 
-#### Gnosis (108 Validators)
+#### Gnosis (Validators)
 ```bash
 make deploy-gnosis
 # - Configura validadores nativos
-# - Optimiza para 108 validadores
+# - Optimiza para validadores
 # - Configura monitoring específico
 ```
 
@@ -239,18 +238,18 @@ make deploy-aztec
 - **Acceso**: Solo para procesos autorizados
 - **Audit**: Log de cada uso
 
-### Compliance Institucional
+### Operación de Validadores
 
-#### KYB/KYC
-- **Verificación**: Identidad de la organización
-- **Documentación**: Certificados y licencias
-- **Actualización**: Anual o por cambios
-- **Almacenamiento**: Encriptado, acceso restringido
+#### Gestión de Validadores
+- **Registro**: Proceso automatizado de registro
+- **Monitoreo**: Estado en tiempo real
+- **Optimización**: Configuración para máximo rendimiento
+- **Mantenimiento**: Updates y parches automáticos
 
-#### Auditorías
-- **Interna**: Mensual, por Governance Lead
-- **Externa**: Trimestral, por auditor independiente
-- **Regulatoria**: Según requerimientos locales
+#### Auditorías Técnicas
+- **Interna**: Mensual, por Noa SEED Org
+- **Externa**: Trimestral, por auditor técnico independiente
+- **Regulatoria**: Según requerimientos de red
 - **Técnica**: Continua, automatizada
 
 ---
@@ -294,9 +293,9 @@ make deploy-aztec
 - **Slack**: Comunicación interna
 
 #### Escalamiento
-- **P0**: Notificación inmediata a todo el equipo
-- **P1**: Notificación a DevOps + Monitoring Lead
-- **P2**: Notificación a Monitoring Lead
+- **P0**: Notificación inmediata a Noa SEED Org
+- **P1**: Notificación a Noa SEED Org + Technical Support
+- **P2**: Notificación a Technical Support
 - **P3**: Log en dashboard
 
 ---
@@ -344,8 +343,8 @@ make deploy-aztec
 - Reportes automáticos
 
 #### Manual (Periódica)
-- **Semanal**: Revisión de logs por Monitoring Lead
-- **Mensual**: Auditoría completa por Governance Lead
+- **Semanal**: Revisión de logs por Noa SEED Org
+- **Mensual**: Auditoría completa por Noa SEED Org
 - **Trimestral**: Auditoría externa independiente
 
 ### Evidencia Auditada
@@ -456,50 +455,9 @@ make deploy-aztec
 
 ---
 
-## Gobernanza
+## Mejora Continua
 
-### Estructura Organizacional
-
-#### Roles y Responsabilidades
-
-| Rol | Responsabilidades | Escalamiento |
-|-----|------------------|--------------|
-| **Research Lead** | Análisis de estándares, métricas | Governance Lead |
-| **Tech Lead** | Playbooks técnicos, implementación | DevOps Lead |
-| **DevOps Lead** | Scripts, automatización, deploy | Monitoring Lead |
-| **Monitoring Lead** | KPIs, reportes, alertas | Governance Lead |
-| **Governance Lead** | Compliance, auditorías, procesos | CEO |
-| **Comms Lead** | Documentación ejecutiva, comunicación | Governance Lead |
-
-#### RACI Matrix
-
-| Proceso | Research | Tech | DevOps | Monitoring | Governance | Comms |
-|---------|----------|------|--------|------------|------------|-------|
-| **Bootstrap** | C | R | A | I | I | I |
-| **Hardening** | I | C | A | R | I | I |
-| **Deploy** | I | R | A | C | I | I |
-| **Monitoring** | I | I | C | A | R | I |
-| **Backup** | I | I | A | C | R | I |
-| **Incident** | I | I | A | R | C | I |
-| **Audit** | I | I | I | C | A | R |
-| **Reporting** | I | I | I | A | R | C |
-
-*R=Responsible, A=Accountable, C=Consulted, I=Informed*
-
-### Procesos de Decisión
-
-#### Niveles de Autoridad
-- **Operacional**: DevOps Lead (cambios menores)
-- **Técnico**: Tech Lead (cambios de configuración)
-- **Estratégico**: Governance Lead (cambios de proceso)
-- **Institucional**: CEO (cambios de política)
-
-#### Comités
-- **Technical Committee**: Tech + DevOps + Monitoring
-- **Governance Committee**: Governance + Comms + CEO
-- **Audit Committee**: Governance + Monitoring + externo
-
-### Ciclo de Mejora Continua
+### Ciclo de Optimización
 
 #### Revisión Trimestral
 1. **Análisis**: Performance vs. objetivos
@@ -512,7 +470,7 @@ make deploy-aztec
 - **Documentación**: Cada incidente documentado
 - **Análisis**: Causa raíz identificada
 - **Mejora**: Proceso actualizado
-- **Comunicación**: Compartido con equipo
+- **Comunicación**: Compartido con equipo técnico
 - **Training**: Capacitación actualizada
 
 ---
@@ -544,7 +502,7 @@ make deploy-aztec
 **Documento Version**: 1.0  
 **Última Actualización**: 2025-01-03  
 **Próxima Revisión**: 2025-01-05  
-**Responsable**: SEED Org ltd
+**Responsable**: Noa SEED Org
 
 ---
 
