@@ -19,7 +19,7 @@ Somos un equipo de desarrolladores y operadores de infraestructura blockchain co
 
 Nuestra misión es desarrollar, implementar y mantener infraestructura de nodos blockchain con procesos automatizados, auditables y escalables. Nos comprometemos a operar con los más altos estándares de seguridad, transparencia y continuidad.
 
-Operamos validadores en las redes más relevantes de web3, incluyendo Ethereum, Gnosis, Starknet, y más.
+Operamos validadores en las redes más relevantes de web3, incluyendo Ethereum, Gnosis, Starknet, Aztec, y más.
 
 ---
 
@@ -42,14 +42,15 @@ seedops-institutional/
 │   ├── ethereum.md               # Obol DVT, CSM
 │   ├── gnosis.md                 # Validators
 │   ├── starknet.md               # Delegación STRK
-│   └── aztec.md                  # Validators + sequencers
+│   └── aztec.md                  # Sequencer node
 ├── scripts/                      # Scripts de automatización
 │   ├── 00_bootstrap.sh           # Configuración inicial
 │   ├── 10_hardening.sh           # Seguridad institucional
 │   ├── 20_deploy.sh              # Despliegue automatizado
 │   ├── 30_monitoring.sh          # Monitoreo predictivo
 │   ├── 40_backup.sh              # Backups auditables
-│   └── 90_incident.sh            # Respuesta a incidentes
+│   ├── 90_incident.sh            # Respuesta a incidentes
+│   └── aztec_installer.sh        # Instalador automatizado Aztec
 ├── templates/                    # Templates de configuración
 ├── compose/                      # Docker Compose por red
 ├── env/                         # Variables de entorno
@@ -74,7 +75,7 @@ seedops-institutional/
 - [x] Ethereum (Obol DVT, CSM)
 - [x] Gnosis (validators)
 - [x] Starknet (delegación STRK)
-- [ ] Aztec (validators + sequencers)
+- [x] Aztec (sequencer node)
 
 ### Fase 4: Monitoreo & Reporting
 - [ ] KPIs por red (uptime, APR, slashing, costos)

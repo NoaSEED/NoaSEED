@@ -1,0 +1,48 @@
+# Aztec Sequencer Node Configuration Template
+# Generated for SEEDNodes NodeOps Institucionales
+
+network:
+  name: "{{ AZTEC_NETWORK | default('alpha-testnet') }}"
+  ethereum_hosts: "{{ ETHEREUM_RPC_URL }}"
+  consensus_hosts: "{{ CONSENSUS_BEACON_URL }}"
+  p2p_ip: "{{ P2P_IP }}"
+  p2p_port: {{ P2P_PORT | default(40400) }}
+
+validator:
+  private_keys: "{{ VALIDATOR_PRIVATE_KEYS }}"
+  coinbase: "{{ COINBASE }}"
+  data_directory: "{{ DATA_DIRECTORY | default('/data') }}"
+
+logging:
+  level: "{{ LOG_LEVEL | default('info') }}"
+  format: "{{ LOG_FORMAT | default('json') }}"
+
+monitoring:
+  enabled: {{ MONITORING_ENABLED | default(true) }}
+  port: {{ MONITORING_PORT | default(9999) }}
+  health_check_interval: {{ HEALTH_CHECK_INTERVAL | default(30) }}
+
+security:
+  firewall:
+    allowed_ports:
+      - 22    # SSH
+      - 40400 # P2P TCP
+      - 40400 # P2P UDP
+      - 8080  # RPC
+      - 9999  # Monitoring
+  ssl:
+    enabled: {{ SSL_ENABLED | default(false) }}
+    cert_path: "{{ SSL_CERT_PATH | default('/etc/ssl/certs/aztec.crt') }}"
+    key_path: "{{ SSL_KEY_PATH | default('/etc/ssl/private/aztec.key') }}"
+
+backup:
+  enabled: {{ BACKUP_ENABLED | default(true) }}
+  schedule: "{{ BACKUP_SCHEDULE | default('0 2 * * *') }}"
+  retention_days: {{ BACKUP_RETENTION_DAYS | default(30) }}
+  destination: "{{ BACKUP_DESTINATION | default('/backups/aztec') }}"
+
+performance:
+  max_memory: "{{ MAX_MEMORY | default('6g') }}"
+  max_cpu: {{ MAX_CPU | default(4) }}
+  disk_space_warning: "{{ DISK_SPACE_WARNING | default('10g') }}"
+  disk_space_critical: "{{ DISK_SPACE_CRITICAL | default('5g') }}"
