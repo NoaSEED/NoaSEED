@@ -24,7 +24,8 @@ show_banner() {
  ___/ / /_/ /_/ / /_/ / / / / /_/ / /_/ / /  / / / / / /_/ / 
 /____/\__/\__,_/\__,_/_/ /_/\__,_/\____/_/  /_/_/ /_/\__, /  
                                                    /____/   
-       Institutional NodeOps - Starknet Sepolia (Pathfinder)
+   Institutional NodeOps - Starknet Sepolia (Pathfinder)
+                Purpose: Bitcoin Pool Integration
 EOF
   echo -e "${NC}"
 }
@@ -108,7 +109,7 @@ prepare_dirs() {
 write_env() {
   progress "Writing env file"
   cat > env/starknet-sepolia.env <<EOF
-# Starknet Sepolia (Pathfinder)
+# Starknet Sepolia (Pathfinder) - Purpose: Bitcoin Pool Integration
 ETHEREUM_RPC_URL=${ETH_RPC}
 PATHFINDER_DATA_DIR=${DATA_DIR}
 RPC_PORT=${RPC_PORT}
@@ -163,6 +164,7 @@ final_info() {
   echo "  • HTTP RPC:    http://<server-ip>:${RPC_PORT}"
   echo "  • Metrics:     http://<server-ip>:9090 (if enabled)"
   echo ""
+  echo -e "${YELLOW}Purpose: Bitcoin Pool Integration (per guide).${NC}"
   log "Done"
 }
 
