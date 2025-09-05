@@ -1,0 +1,71 @@
+# SEEDNodes - Configuración de Ethereum
+# Template generado automáticamente
+
+network: {{ ETHEREUM_NETWORK | default('mainnet') }}
+
+execution_client:
+  type: {{ EXECUTION_CLIENT | default('geth') }}
+  rpc_address: "0.0.0.0"
+  rpc_port: {{ EXECUTION_CLIENT_PORT | default(8545) }}
+  ws_address: "0.0.0.0"
+  ws_port: 8546
+  metrics_address: "0.0.0.0"
+  metrics_port: 6060
+  max_peers: {{ GETH_MAX_PEERS | default(50) }}
+  cache_size: {{ GETH_CACHE_SIZE | default(4096) }}
+
+consensus_client:
+  type: {{ CONSENSUS_CLIENT | default('lighthouse') }}
+  http_address: "0.0.0.0"
+  http_port: {{ CONSENSUS_CLIENT_PORT | default(9000) }}
+  metrics_address: "0.0.0.0"
+  metrics_port: 9001
+  checkpoint_sync_url: "{{ ETHEREUM_BEACON_URL | default('https://beacon-mainnet.infura.io/v3/YOUR_KEY') }}"
+  max_peers: {{ LIGHTHOUSE_MAX_PEERS | default(50) }}
+  target_peers: {{ LIGHTHOUSE_TARGET_PEERS | default(25) }}
+
+validator:
+  beacon_nodes: ["http://lighthouse-beacon:9000"]
+  validators_dir: "{{ VALIDATOR_KEYS_DIR | default('/opt/ethereum/validator-keys') }}"
+  secrets_dir: "{{ VALIDATOR_KEYS_DIR | default('/opt/ethereum/validator-keys') }}"
+  metrics_address: "0.0.0.0"
+  metrics_port: 9002
+  init_slashing_protection: true
+  validator_count: {{ VALIDATOR_COUNT | default(32) }}
+
+dvt:
+  enabled: {{ DVT_ENABLED | default('true') }}
+  operator_count: {{ DVT_OPERATOR_COUNT | default(4) }}
+  threshold: {{ DVT_THRESHOLD | default(3) }}
+  cluster_name: "{{ DVT_CLUSTER_NAME | default('seednodes-cluster') }}"
+  api_address: "0.0.0.0:3610"
+  metrics_address: "0.0.0.0:3611"
+
+logging:
+  level: {{ LOG_LEVEL | default('info') }}
+  format: {{ LOG_FORMAT | default('json') }}
+
+monitoring:
+  prometheus:
+    enabled: true
+    port: {{ PROMETHEUS_PORT | default(9090) }}
+  grafana:
+    enabled: true
+    port: {{ GRAFANA_PORT | default(3000) }}
+
+backup:
+  schedule: "{{ BACKUP_SCHEDULE | default('0 2 * * *') }}"
+  retention_days: {{ BACKUP_RETENTION_DAYS | default(30) }}
+  remote_url: "{{ BACKUP_REMOTE_URL | default('s3://seedops-backups/ethereum') }}"
+
+security:
+  ssh_port: {{ SSH_PORT | default(22) }}
+  ufw_enabled: {{ UFW_ENABLED | default('true') }}
+  fail2ban_enabled: {{ FAIL2BAN_ENABLED | default('true') }}
+
+notifications:
+  telegram:
+    bot_token: "{{ TELEGRAM_BOT_TOKEN | default('') }}"
+    chat_id: "{{ TELEGRAM_CHAT_ID | default('') }}"
+  discord:
+    webhook_url: "{{ DISCORD_WEBHOOK_URL | default('') }}"
