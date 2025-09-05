@@ -536,17 +536,15 @@ make deploy-aztec
 - [Gnosis Chain Validators](https://docs.gnosischain.com/)
 
 ### C. Contactos de Emergencia
-- **P0 Incidents**: +1-XXX-XXX-XXXX
-- **Security Issues**: security@seedlatam.org
-- **Governance**: governance@seedlatam.org
-- **Technical Support**: tech@seedlatam.org
+- **Security Issues**: noa@seedlatam.org
+- **Technical Support**: node@seedlatam.org
 
 ---
 
 **Documento Version**: 1.0  
-**Última Actualización**: 2025-01-XX  
-**Próxima Revisión**: 2025-04-XX  
-**Responsable**: Governance Lead - SEED Org
+**Última Actualización**: 2025-01-03  
+**Próxima Revisión**: 2025-01-05  
+**Responsable**: SEED Org ltd
 
 ---
 
