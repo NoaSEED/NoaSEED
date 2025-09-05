@@ -55,17 +55,7 @@ seedops-institutional/
 - [ ] Pipeline de reportes automáticos
 - [ ] Dashboard institucional
 
-### Fase 5: Compliance & Governance
-- [ ] Procesos KYB/KYC
-- [ ] Protocolos de seguridad de claves
-- [ ] Auditorías internas
-
-### Fase 6: Comunicación Institucional
-- [ ] Documento ejecutivo
-- [ ] Reportes para fundaciones
-- [ ] Diferenciación narrativa
-
-### Fase 7: Mejora Continua
+### Fase 5: Mejora Continua
 - [ ] Revisión trimestral
 - [ ] Actualización de guías
 - [ ] Lessons learned
@@ -106,7 +96,7 @@ Cada proceso genera **registro verificable**:
 - Backups: hash SHA256 + restore test
 - Monitoreo: validación de métricas y SLA
 
-## Resultado Final
+## Estándares Operativos
 
 Cada proceso operativo en SEEDNodes genera registros de auditoría completos. Los despliegues, actualizaciones y backups requieren evidencia verificable para ser considerados válidos. Esto garantiza transparencia, trazabilidad y confianza para delegadores, fundaciones y stakeholders.
 
