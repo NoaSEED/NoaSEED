@@ -17,13 +17,9 @@ show_banner() {
   clear || true
   echo -e "${WHITE}"
   cat << 'EOF'
-  ____  _____ _____  _____ _   _           _            
- / ___|| ____| ____|| ____| \ | | ___  ___| |___  ___  
- \___ \|  _| |  _|  |  _|  |  \| |/ _ \/ __| / __|/ _ \ 
-  ___) | |___| |___ | |___ | |\  |  __/\__ \ \__ \  __/ 
- |____/|_____|_____||_____||_| \_|\___||___/_|___/\___| 
+seednodes
 
-        SEEDNodes - Starknet Sepolia (Pathfinder) One-Click
+        seednodes - Starknet Sepolia (Pathfinder) One-Click
                  Purpose: Bitcoin Pool Integration
 EOF
   echo -e "${NC}"
