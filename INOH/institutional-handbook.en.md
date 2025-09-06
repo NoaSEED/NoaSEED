@@ -36,22 +36,10 @@ Establish industry best practices ensuring:
 
 ---
 
-## Minimum Infrastructure
+## Minimum Infrastructure (policy-level)
+Refer to the technical baseline and sizing guidance in `docs/capacity-planning.en.md` for hardware, software, security tooling, and monitoring stacks. The handbook remains policy-only; operational details live in playbooks and docs.
 
-### Hardware
-- Production: 8+ cores, 32GB+ RAM, 2TB+ NVMe, 1Gbps+, 99.9% SLA
-- Staging: 4+ cores, 16GB+ RAM, 1TB+ SSD, 100Mbps+
-
-### Software
-- Ubuntu 22.04 LTS, Docker 24+, Docker Compose 2.20+, Git 2.40+
-
-### Security Tooling
-- UFW, Fail2ban, SSH keys only, VPN
-
-### Monitoring
-- Prometheus + Grafana, Node Exporter, AlertManager, Telegram/Discord
-
-### Supported Networks
+### Supported Networks (at a glance)
 | Network | Type | Validators | Sequencers | Status |
 |--------|------|------------|------------|--------|
 | Ethereum | Obol DVT | ✅ | ❌ | Production |
@@ -141,4 +129,6 @@ Document Version: 1.0
 Last Update: 2025‑01‑03  
 Next Review: 2025‑01‑05  
 Owner: Noa SEED Org
+
+
 

@@ -37,7 +37,7 @@ nano env/starknet-sepolia.env
 set -a && source env/starknet-sepolia.env && set +a
 docker compose -f compose/starknet-sepolia.docker-compose.yml up -d pathfinder
 ```
-3. Con monitoreo (Prometheus, Grafana, Node Exporter):
+3. With monitoring (Prometheus, Grafana, Node Exporter):
 ```bash
 docker compose -f compose/starknet-sepolia.docker-compose.yml --profile monitoring up -d
 ```

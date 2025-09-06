@@ -38,7 +38,7 @@ seedops-institutional/
 ├── env/                           # Environment examples per network
 ├── monitoring/                    # Prometheus/Grafana provisioning
 ├── audit-logs/                    # Operation evidence
-└── docs/
+└── docs/                          # Cross-cutting technical references (e.g., capacity planning)
 ```
 
 ## Implementation Phases
@@ -58,24 +58,24 @@ seedops-institutional/
 
 ## Quickstart: Starknet Sepolia (Pathfinder)
 
-1) Variables de entorno
+1) Environment variables
 ```bash
 cp env/starknet-sepolia.env.example env/starknet-sepolia.env
 nano env/starknet-sepolia.env
 ```
 
-2) Levantar nodo
+2) Start node
 ```bash
 set -a && source env/starknet-sepolia.env && set +a
 docker compose -f compose/starknet-sepolia.docker-compose.yml up -d pathfinder
 ```
 
-3) Con monitoreo (opcional)
+3) With monitoring (optional)
 ```bash
 docker compose -f compose/starknet-sepolia.docker-compose.yml --profile monitoring up -d
 ```
 
-4) Comandos útiles
+4) Useful commands
 ```bash
 docker compose -f compose/starknet-sepolia.docker-compose.yml ps
 docker compose -f compose/starknet-sepolia.docker-compose.yml logs -fn 200 pathfinder
@@ -83,7 +83,7 @@ docker compose -f compose/starknet-sepolia.docker-compose.yml pull && \
 docker compose -f compose/starknet-sepolia.docker-compose.yml up -d
 ```
 
-Endpoints: RPC `http://<ip>:9545`, Metrics `http://<ip>:9187`, Prometheus `http://<ip>:9090`, Grafana `http://<ip>:3000` (admin por defecto `admin`).
+Endpoints: RPC `http://<ip>:9545`, Metrics `http://<ip>:9187`, Prometheus `http://<ip>:9090`, Grafana `http://<ip>:3000` (default admin `admin`).
 
 ---
 
