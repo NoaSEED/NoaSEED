@@ -37,12 +37,15 @@ progress() { echo -e "${BLUE}==> $1${NC}"; }
 
 usage() {
   cat << USAGE
-Uso: $0 [--yes] [--eth-ws WS_URL] [--data-dir DIR] [--rpc-port PORT] [--monitoring Y|N]
+Uso: $0 [--yes] [--eth-ws WS_URL] [--data-dir DIR] [--rpc-port PORT] [--monitoring Y|N] [--grafana-port PORT] [--prom-port PORT] [--node-exporter-port PORT]
   --yes             Modo no interactivo (no pregunta)
   --eth-ws          URL de Ethereum WebSocket (ws:// o wss://)
   --data-dir        Directorio de datos de Pathfinder (default /var/lib/pathfinder)
   --rpc-port        Puerto HTTP RPC de Pathfinder (default 9545)
   --monitoring      Habilitar monitoreo (Y|N) (default Y)
+  --grafana-port    Puerto host para Grafana (default 3001)
+  --prom-port       Puerto host para Prometheus (default 9091)
+  --node-exporter-port Puerto host para Node Exporter (default 9101)
 USAGE
 }
 
@@ -51,6 +54,9 @@ ARG_ETH_WS=""
 ARG_DATA_DIR=""
 ARG_RPC_PORT=""
 ARG_MON=""
+ARG_GRAFANA_PORT=""
+ARG_PROM_PORT=""
+ARG_NODE_EXPORTER_PORT=""
 
 parse_args() {
   while [[ $# -gt 0 ]]; do
@@ -65,6 +71,12 @@ parse_args() {
         ARG_RPC_PORT="$2"; shift 2 ;;
       --monitoring)
         ARG_MON="$2"; shift 2 ;;
+      --grafana-port)
+        ARG_GRAFANA_PORT="$2"; shift 2 ;;
+      --prom-port)
+        ARG_PROM_PORT="$2"; shift 2 ;;
+      --node-exporter-port)
+        ARG_NODE_EXPORTER_PORT="$2"; shift 2 ;;
       -h|--help)
         usage; exit 0 ;;
       *)
@@ -88,7 +100,10 @@ collect_inputs() {
     DATA_DIR=${ARG_DATA_DIR:-"/var/lib/pathfinder"}
     RPC_PORT=${ARG_RPC_PORT:-"9545"}
     MON=${ARG_MON:-"Y"}
-    log "Modo no interactivo: ETH_WS=$ETH_WS, DATA_DIR=$DATA_DIR, RPC_PORT=$RPC_PORT, MON=$MON"
+    GRAFANA_PORT=${ARG_GRAFANA_PORT:-"3001"}
+    PROM_PORT=${ARG_PROM_PORT:-"9091"}
+    NODE_EXPORTER_HOST_PORT=${ARG_NODE_EXPORTER_PORT:-"9101"}
+    log "Modo no interactivo: ETH_WS=$ETH_WS, DATA_DIR=$DATA_DIR, RPC_PORT=$RPC_PORT, MON=$MON, GRAFANA_PORT=$GRAFANA_PORT, PROM_PORT=$PROM_PORT, NODE_EXPORTER_HOST_PORT=$NODE_EXPORTER_HOST_PORT"
   else
     read -p "Ethereum WS URL (recomendado ws(s)://...): " ETH_WS
     if [[ -z "$ETH_WS" ]]; then
@@ -101,6 +116,14 @@ collect_inputs() {
     RPC_PORT=${RPC_PORT:-9545}
     read -p "¿Habilitar monitoreo (Prometheus+Grafana+NodeExporter)? [Y/n]: " MON
     MON=${MON:-Y}
+    if [[ "${MON^^}" == "Y" ]]; then
+      read -p "Puerto de Grafana (default: 3001): " GRAFANA_PORT
+      GRAFANA_PORT=${GRAFANA_PORT:-3001}
+      read -p "Puerto de Prometheus (default: 9091): " PROM_PORT
+      PROM_PORT=${PROM_PORT:-9091}
+      read -p "Puerto host para Node Exporter (default: 9101): " NODE_EXPORTER_HOST_PORT
+      NODE_EXPORTER_HOST_PORT=${NODE_EXPORTER_HOST_PORT:-9101}
+    fi
   fi
 }
 
@@ -119,6 +142,9 @@ PATHFINDER_DATA_DIR=${DATA_DIR}
 RPC_PORT=${RPC_PORT}
 METRICS_PORT=9187
 NODE_EXPORTER_PORT=9100
+GRAFANA_PORT=${GRAFANA_PORT:-3001}
+PROM_PORT=${PROM_PORT:-9091}
+NODE_EXPORTER_HOST_PORT=${NODE_EXPORTER_HOST_PORT:-9101}
 EOF
 }
 
@@ -158,12 +184,12 @@ services:
     image: prom/node-exporter:latest
     container_name: starknet-node-exporter
     restart: unless-stopped
-    pid: "host"
-    network_mode: host
     command:
       - --path.rootfs=/host
     volumes:
       - /:/host:ro,rslave
+    ports:
+      - "${NODE_EXPORTER_HOST_PORT:-9101}:9100"
     profiles:
       - monitoring
 
@@ -174,7 +200,7 @@ services:
     volumes:
       - ../monitoring/prometheus-starknet.yml:/etc/prometheus/prometheus.yml:ro
     ports:
-      - "9090:9090"
+      - "${PROM_PORT:-9091}:9090"
     profiles:
       - monitoring
 
@@ -188,7 +214,7 @@ services:
       - ../monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
       - ../monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
     ports:
-      - "3000:3000"
+      - "${GRAFANA_PORT:-3001}:3000"
     profiles:
       - monitoring
 YAML
