@@ -15,7 +15,7 @@ Deploy and operate a Starknet node on Sepolia using Pathfinder via Docker, as a 
 
 ---
 
-## Automated Install
+## Automated Install (Script)
 ```bash
 git clone https://github.com/NoaSEED/seedops-institutional.git
 cd seedops-institutional
@@ -23,6 +23,24 @@ chmod +x scripts/starknet_sepolia_installer.sh
 ./scripts/starknet_sepolia_installer.sh
 ```
 Prompts: Sepolia RPC, data directory (default `/var/lib/pathfinder`), RPC port (9545), monitoring stack enable (Prometheus + Grafana + Node Exporter).
+
+---
+
+## Manual via Docker Compose
+1. Copiar y editar variables de entorno:
+```bash
+cp env/starknet-sepolia.env.example env/starknet-sepolia.env
+nano env/starknet-sepolia.env
+```
+2. Levantar servicios (solo nodo):
+```bash
+set -a && source env/starknet-sepolia.env && set +a
+docker compose -f compose/starknet-sepolia.docker-compose.yml up -d pathfinder
+```
+3. Con monitoreo (Prometheus, Grafana, Node Exporter):
+```bash
+docker compose -f compose/starknet-sepolia.docker-compose.yml --profile monitoring up -d
+```
 
 ---
 
@@ -64,4 +82,6 @@ Backup: archive the data directory (`/var/lib/pathfinder`) and provisioning file
 ---
 
 Owner: Noa SEED Org
+
+
 

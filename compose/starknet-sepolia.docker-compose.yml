@@ -1,0 +1,65 @@
+services:
+  pathfinder:
+    container_name: starknet-pathfinder
+    image: eqlabs/pathfinder:latest
+    restart: unless-stopped
+    user: "0:0"
+    environment:
+      - RUST_LOG=info
+    volumes:
+      - ${PATHFINDER_DATA_DIR}:/usr/share/pathfinder/data
+    ports:
+      - "${RPC_PORT:-9545}:9545"
+      - "${METRICS_PORT:-9187}:9187"
+    command: >
+      pathfinder \
+      --network sepolia \
+      --ethereum.url ${ETHEREUM_RPC_URL} \
+      --http-rpc 0.0.0.0:9545 \
+      --monitoring 0.0.0.0:9187
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9545/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: starknet-node-exporter
+    restart: unless-stopped
+    pid: "host"
+    network_mode: host
+    command:
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro,rslave
+    profiles:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: starknet-prometheus
+    restart: unless-stopped
+    volumes:
+      - ../monitoring/prometheus-starknet.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: starknet-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - ../monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - ../monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    ports:
+      - "3000:3000"
+    profiles:
+      - monitoring
+
+

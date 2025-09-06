@@ -1,0 +1,13 @@
+{
+  "annotations": {"list": []},
+  "panels": [
+    {"type": "stat", "title": "Pathfinder UP", "targets": [{"expr": "up{job=\"starknet_pathfinder\"}", "refId": "A"}], "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}},
+    {"type": "graph", "title": "CPU %", "targets": [{"expr": "100 - (avg by(instance)(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "refId": "B"}], "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}},
+    {"type": "graph", "title": "Memory Used %", "targets": [{"expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100", "refId": "C"}], "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}}
+  ],
+  "schemaVersion": 38,
+  "title": "Starknet Pathfinder + Host",
+  "version": 1
+}
+
+
