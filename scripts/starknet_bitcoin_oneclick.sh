@@ -34,6 +34,44 @@ warn() { echo -e "${YELLOW}[WARN] $1${NC}"; }
 fail() { echo -e "${RED}[ERROR] $1${NC}"; exit 1; }
 progress() { echo -e "${BLUE}==> $1${NC}"; }
 
+usage() {
+  cat << USAGE
+Uso: $0 [--yes] [--eth-ws WS_URL] [--data-dir DIR] [--rpc-port PORT] [--monitoring Y|N]
+  --yes             Modo no interactivo (no pregunta)
+  --eth-ws          URL de Ethereum WebSocket (ws:// o wss://)
+  --data-dir        Directorio de datos de Pathfinder (default /var/lib/pathfinder)
+  --rpc-port        Puerto HTTP RPC de Pathfinder (default 9545)
+  --monitoring      Habilitar monitoreo (Y|N) (default Y)
+USAGE
+}
+
+NON_INTERACTIVE="false"
+ARG_ETH_WS=""
+ARG_DATA_DIR=""
+ARG_RPC_PORT=""
+ARG_MON=""
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --yes)
+        NON_INTERACTIVE="true"; shift ;;
+      --eth-ws)
+        ARG_ETH_WS="$2"; shift 2 ;;
+      --data-dir)
+        ARG_DATA_DIR="$2"; shift 2 ;;
+      --rpc-port)
+        ARG_RPC_PORT="$2"; shift 2 ;;
+      --monitoring)
+        ARG_MON="$2"; shift 2 ;;
+      -h|--help)
+        usage; exit 0 ;;
+      *)
+        echo "Opción desconocida: $1"; usage; exit 1 ;;
+    esac
+  done
+}
+
 ensure_prereqs() {
   progress "Comprobando prerequisitos (curl, docker, compose)"
   command -v curl >/dev/null || fail "curl no instalado"
@@ -44,17 +82,25 @@ ensure_prereqs() {
 
 collect_inputs() {
   progress "Parámetros"
-  read -p "Ethereum WS URL (recomendado ws(s)://...): " ETH_WS
-  if [[ -z "$ETH_WS" ]]; then
-    warn "No ingresaste WS. Usaré temporalmente wss://ethereum-sepolia.publicnode.com"
-    ETH_WS="wss://ethereum-sepolia.publicnode.com"
+  if [[ "$NON_INTERACTIVE" == "true" ]]; then
+    ETH_WS=${ARG_ETH_WS:-"wss://ethereum-sepolia.publicnode.com"}
+    DATA_DIR=${ARG_DATA_DIR:-"/var/lib/pathfinder"}
+    RPC_PORT=${ARG_RPC_PORT:-"9545"}
+    MON=${ARG_MON:-"Y"}
+    log "Modo no interactivo: ETH_WS=$ETH_WS, DATA_DIR=$DATA_DIR, RPC_PORT=$RPC_PORT, MON=$MON"
+  else
+    read -p "Ethereum WS URL (recomendado ws(s)://...): " ETH_WS
+    if [[ -z "$ETH_WS" ]]; then
+      warn "No ingresaste WS. Usaré temporalmente wss://ethereum-sepolia.publicnode.com"
+      ETH_WS="wss://ethereum-sepolia.publicnode.com"
+    fi
+    read -p "Directorio de datos (default: /var/lib/pathfinder): " DATA_DIR
+    DATA_DIR=${DATA_DIR:-/var/lib/pathfinder}
+    read -p "Puerto RPC HTTP de Pathfinder (default: 9545): " RPC_PORT
+    RPC_PORT=${RPC_PORT:-9545}
+    read -p "¿Habilitar monitoreo (Prometheus+Grafana+NodeExporter)? [Y/n]: " MON
+    MON=${MON:-Y}
   fi
-  read -p "Directorio de datos (default: /var/lib/pathfinder): " DATA_DIR
-  DATA_DIR=${DATA_DIR:-/var/lib/pathfinder}
-  read -p "Puerto RPC HTTP de Pathfinder (default: 9545): " RPC_PORT
-  RPC_PORT=${RPC_PORT:-9545}
-  read -p "¿Habilitar monitoreo (Prometheus+Grafana+NodeExporter)? [Y/n]: " MON
-  MON=${MON:-Y}
 }
 
 prepare_layout() {
@@ -222,6 +268,7 @@ final_msg() {
 
 main() {
   show_banner
+  parse_args "$@"
   ensure_prereqs
   collect_inputs
   prepare_layout
