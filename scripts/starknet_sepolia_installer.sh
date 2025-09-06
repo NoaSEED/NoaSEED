@@ -198,12 +198,15 @@ services:
     ports:
       - "${RPC_PORT}:9545"
       - "9187:9187"
-    command: >
-      pathfinder \
-      --network sepolia \
-      --ethereum.url ${ETHEREUM_RPC_URL} \
-      --http-rpc 0.0.0.0:9545 \
-      --monitoring 0.0.0.0:9187
+    command:
+      - --network
+      - sepolia
+      - --ethereum.url
+      - ${ETHEREUM_RPC_URL}
+      - --http-rpc
+      - 0.0.0.0:9545
+      - --monitoring
+      - 0.0.0.0:9187
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9545/health"]
       interval: 30s
