@@ -141,7 +141,7 @@ install_packages() {
     sudo apt install curl iptables build-essential git wget lz4 jq make gcc nano \
         automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev \
         libleveldb-dev tar clang bsdmainutils ncdu unzip libleveldb-dev ufw \
-        screen gawk -y
+        screen gawk openssl -y
     
     log "Packages installed ✓"
 }
@@ -196,6 +196,13 @@ configure_firewall() {
     sudo ufw allow 40400/udp
     sudo ufw allow 8080
     sudo ufw allow 9999  # For Dozzle monitoring
+    # Execution/Consensus P2P and APIs
+    sudo ufw allow 8545
+    sudo ufw allow 30303/tcp
+    sudo ufw allow 30303/udp
+    sudo ufw allow 3500
+    sudo ufw allow 13000/tcp
+    sudo ufw allow 12000/udp
     sudo ufw --force enable
     sudo ufw reload
     
@@ -247,7 +254,11 @@ prepare_directory() {
     
     # Create new directory
     rm -rf aztec
-    mkdir aztec && cd aztec
+    mkdir -p aztec && cd aztec
+    mkdir -p geth prysm jwt
+    if [[ ! -f jwt/jwt.hex ]]; then
+        openssl rand -hex 32 | tr -d '\n' > jwt/jwt.hex
+    fi
     
     log "Directory prepared ✓"
 }
@@ -259,8 +270,8 @@ create_config_files() {
     
     # Create .env file
     cat > .env << EOF
-ETHEREUM_RPC_URL=${SEPOLIA_RPC}
-CONSENSUS_BEACON_URL=${BEACON_RPC}
+ETHEREUM_RPC_URL=${SEPOLIA_RPC:-http://geth:8545}
+CONSENSUS_BEACON_URL=${BEACON_RPC:-http://prysm:3500}
 VALIDATOR_PRIVATE_KEYS=${PRIVATE_KEY}
 COINBASE=${WALLET_ADDRESS}
 P2P_IP=${IP_ADDRESS}
@@ -269,11 +280,50 @@ EOF
     # Create docker-compose.yml
     cat > docker-compose.yml << 'EOF'
 services:
+  geth:
+    image: ethereum/client-go:stable
+    container_name: geth-sepolia
+    restart: unless-stopped
+    command: >
+      --sepolia
+      --http --http.addr 0.0.0.0 --http.vhosts=* --http.api eth,net,web3
+      --authrpc.addr 0.0.0.0 --authrpc.port 8551 --authrpc.vhosts=*
+      --authrpc.jwtsecret /jwt/jwt.hex
+      --syncmode snap
+      --datadir /root/.ethereum
+    ports:
+      - "8545:8545"
+      - "30303:30303/tcp"
+      - "30303:30303/udp"
+    volumes:
+      - ./geth:/root/.ethereum
+      - ./jwt:/jwt
+
+  prysm:
+    image: gcr.io/prysmaticlabs/prysm/beacon-chain:stable
+    container_name: prysm-sepolia
+    restart: unless-stopped
+    command: >
+      --sepolia
+      --accept-terms-of-use
+      --execution-endpoint=http://geth:8551
+      --jwt-secret=/jwt/jwt.hex
+      --checkpoint-sync-url=https://sepolia.checkpoint-sync.ethpandaops.io
+      --http-host=0.0.0.0 --http-port=3500
+    ports:
+      - "3500:3500"
+      - "13000:13000/tcp"
+      - "12000:12000/udp"
+    volumes:
+      - ./prysm:/data
+      - ./jwt:/jwt
+    depends_on:
+      - geth
+
   aztec-node:
     container_name: aztec-sequencer
     image: aztecprotocol/aztec:1.2.1
     restart: unless-stopped
-    network_mode: host
     environment:
       ETHEREUM_HOSTS: ${ETHEREUM_RPC_URL}
       L1_CONSENSUS_HOST_URLS: ${CONSENSUS_BEACON_URL}
@@ -285,23 +335,56 @@ services:
     entrypoint: >
       sh -c 'node --no-warnings /usr/src/yarn-project/aztec/dest/bin/index.js start --network alpha-testnet --node --archiver --sequencer'
     ports:
-      - 40400:40400/tcp
-      - 40400:40400/udp
-      - 8080:8080
+      - "40400:40400/tcp"
+      - "40400:40400/udp"
+      - "8080:8080"
     volumes:
       - /root/.aztec/alpha-testnet/data/:/data
+    depends_on:
+      - geth
+      - prysm
 EOF
     
     log "Configuration files created ✓"
 }
 
+# Wait until RPC endpoints are ready
+wait_for_endpoints() {
+    log "Waiting for local RPC endpoints to be ready..."
+    local timeout=${1:-900}
+    local start_ts=$(date +%s)
+    while true; do
+        local ok_geth ok_prysm
+        ok_geth=$(curl -s -m 2 -X POST -H "Content-Type: application/json" \
+          --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+          http://localhost:8545 | jq -r '.result' 2>/dev/null || true)
+        ok_prysm=$(curl -s -m 2 -o /dev/null -w '%{http_code}' http://localhost:3500/eth/v1/node/health || true)
+        if [[ "$ok_geth" != "null" && -n "$ok_geth" && "$ok_prysm" == "200" ]]; then
+            log "Local RPCs are ready (chainId=${ok_geth})."
+            break
+        fi
+        local now=$(date +%s)
+        if (( now - start_ts > timeout )); then
+            log "Timed out waiting for RPC endpoints; proceeding anyway."
+            break
+        fi
+        sleep 5
+    done
+}
+
 # Start Aztec node
 start_aztec_node() {
-    log "Starting Aztec Sequencer Node..."
+    log "Starting local Execution (geth) and Consensus (prysm) nodes..."
     show_progress 9 10 "Node Startup"
     
-    # Start the node
-    docker compose up -d
+    # Start execution and consensus
+    docker compose up -d geth prysm
+    
+    # Wait for readiness
+    wait_for_endpoints 1200
+    
+    log "Starting Aztec Sequencer Node..."
+    docker compose up -d aztec-node
     
     # Wait a moment for startup
     sleep 10
