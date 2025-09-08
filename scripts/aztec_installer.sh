@@ -16,6 +16,15 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
+# If running as root, make sudo a no-op for seamless execution
+if [[ $EUID -eq 0 ]]; then
+    sudo() { "$@"; }
+fi
+
+# Default RPC endpoints (DappNode)
+SEPOLIA_RPC_DEFAULT="http://geth.sepolia-geth.dappnode:8545"
+BEACON_RPC_DEFAULT="http://prysm-sepolia.dappnode:3500"
+
 # ASCII Art Banner
 show_banner() {
     clear
@@ -70,14 +79,14 @@ check_requirements() {
         error "This script requires Ubuntu/Debian"
     fi
     
-    # Check if running as root (allow override with ALLOW_ROOT=yes/true/1)
+    # Allow running as root by default; can be disabled with ALLOW_ROOT=no
     if [[ $EUID -eq 0 ]]; then
         case "${ALLOW_ROOT,,}" in
-            yes|true|1|y)
-                log "Running as root with ALLOW_ROOT enabled. Proceed with caution."
+            no|false|0|n)
+                error "Running as root is disabled by ALLOW_ROOT. Set ALLOW_ROOT=yes or run as non-root user."
                 ;;
             *)
-                error "Please run as non-root user with sudo privileges or set ALLOW_ROOT=yes to proceed as root"
+                log "Running as root. Proceeding (sudo is a no-op)."
                 ;;
         esac
     fi
@@ -196,10 +205,13 @@ get_configuration() {
         read -p "Enter your VPS IP address: " IP_ADDRESS
     fi
     
-    # Get RPC URLs
+    # Set RPC URLs (DappNode defaults; allow override via env vars)
     echo ""
-    read -p "Enter Sepolia RPC URL: " SEPOLIA_RPC
-    read -p "Enter Beacon RPC URL: " BEACON_RPC
+    log "Using DappNode RPC defaults for Sepolia (execution) and Beacon (consensus)."
+    SEPOLIA_RPC="${SEPOLIA_RPC:-$SEPOLIA_RPC_DEFAULT}"
+    BEACON_RPC="${BEACON_RPC:-$BEACON_RPC_DEFAULT}"
+    echo -e "${CYAN}Sepolia RPC: ${SEPOLIA_RPC}${NC}"
+    echo -e "${CYAN}Beacon RPC:  ${BEACON_RPC}${NC}"
     
     # Get wallet information
     echo ""
