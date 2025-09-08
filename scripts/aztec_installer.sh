@@ -380,14 +380,21 @@ start_aztec_node() {
     # Start execution and consensus
     docker compose up -d geth prysm
     
-    # Wait for readiness
-    wait_for_endpoints 1200
+    # Optional readiness wait (disabled by default)
+    case "${WAIT_FOR_RPC,,}" in
+        yes|true|1|y)
+            wait_for_endpoints "${WAIT_FOR_RPC_TIMEOUT:-600}"
+            ;;
+        *)
+            log "Skipping RPC readiness wait (enable with WAIT_FOR_RPC=yes)."
+            ;;
+    esac
     
     log "Starting Aztec Sequencer Node..."
     docker compose up -d aztec-node
     
-    # Wait a moment for startup
-    sleep 10
+    # Brief grace period
+    sleep 5
     
     log "Aztec node started ✓"
 }
