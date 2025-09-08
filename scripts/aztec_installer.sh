@@ -16,6 +16,10 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
+# Default RPC endpoints (DappNode)
+SEPOLIA_RPC_DEFAULT="http://geth.sepolia-geth.dappnode:8545"
+BEACON_RPC_DEFAULT="http://prysm-sepolia.dappnode:3500"
+
 # ASCII Art Banner
 show_banner() {
     clear
@@ -196,10 +200,13 @@ get_configuration() {
         read -p "Enter your VPS IP address: " IP_ADDRESS
     fi
     
-    # Get RPC URLs
+    # Set RPC URLs (DappNode defaults; allow override via env vars)
     echo ""
-    read -p "Enter Sepolia RPC URL: " SEPOLIA_RPC
-    read -p "Enter Beacon RPC URL: " BEACON_RPC
+    log "Using DappNode RPC defaults for Sepolia (execution) and Beacon (consensus)."
+    SEPOLIA_RPC="${SEPOLIA_RPC:-$SEPOLIA_RPC_DEFAULT}"
+    BEACON_RPC="${BEACON_RPC:-$BEACON_RPC_DEFAULT}"
+    echo -e "${CYAN}Sepolia RPC: ${SEPOLIA_RPC}${NC}"
+    echo -e "${CYAN}Beacon RPC:  ${BEACON_RPC}${NC}"
     
     # Get wallet information
     echo ""
