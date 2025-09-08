@@ -16,6 +16,17 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
+# Helper: print centered ASCII art from stdin
+print_centered_art() {
+    local cols
+    cols=$(tput cols 2>/dev/null || echo 80)
+    while IFS= read -r line; do
+        local pad=$(( (cols - ${#line}) / 2 ))
+        (( pad < 0 )) && pad=0
+        printf "%*s%s\n" "$pad" "" "$line"
+    done
+}
+
 # If running as root, make sudo a no-op for seamless execution
 if [[ $EUID -eq 0 ]]; then
     sudo() { "$@"; }
@@ -29,13 +40,14 @@ BEACON_RPC_DEFAULT="http://prysm-sepolia.dappnode:3500"
 show_banner() {
     clear
     echo -e "${GREEN}"
-    cat << "EOF"
-  ____   _____  _____  ____   _   _           _           
- / ___| | ____|| ____|/ ___| | \ | | ___   __| | ___  ___ 
- \___ \ |  _|  |  _|  \___ \ |  \| |/ _ \ / _` |/ _ \/ __|
-  ___) || |___ | |___  ___) || |\  | (_) | (_| |  __/\__ \
- |____/ |_____||_____||____/ |_| \_|\___/ \__,_|\___||___/
-                                                            
+    print_centered_art << 'EOF'
+           _____________
+         /               \
+        /   ___________   \
+       /   /  _____   /\   \
+       \   \_/     \_/  \  /
+        \               _/
+         \_____________/
 EOF
     echo -e "${NC}"
     echo -e "${CYAN}                    Institutional NodeOps - Aztec Sequencer Setup${NC}"
@@ -311,13 +323,14 @@ setup_monitoring() {
 show_final_info() {
     clear
     echo -e "${GREEN}"
-    cat << "EOF"
-  _____  ______  ______  _____  _   _           _            
- / ____||  ____||  ____|/ ____|| \ | |         | |           
-| (___  | |__   | |__  | (___  |  \| | ___   __| | ___  ___  
- \___ \ |  __|  |  __|  \___ \ | . ` |/ _ \ / _` |/ _ \/ __| 
- ____) || |____ | |____ ____) || |\  | (_) | (_| |  __/\__ \ 
-|_____/ |______||______|_____/ |_| \_|\___/ \__,_|\___||___/ 
+    print_centered_art << 'EOF'
+           _____________
+         /               \
+        /   ___________   \
+       /   /  _____   /\   \
+       \   \_/     \_/  \  /
+        \               _/
+         \_____________/
 EOF
     echo -e "${NC}"
     
