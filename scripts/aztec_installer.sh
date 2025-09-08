@@ -32,9 +32,9 @@ if [[ $EUID -eq 0 ]]; then
     sudo() { "$@"; }
 fi
 
-# Default RPC endpoints (hidden in output)
-SEPOLIA_RPC_DEFAULT="http://geth.sepolia-geth.dappnode:8545"
-BEACON_RPC_DEFAULT="http://prysm-sepolia.dappnode:3500"
+# Default RPC endpoints (prefer local docker-compose services)
+SEPOLIA_RPC_DEFAULT="http://geth:8545"
+BEACON_RPC_DEFAULT="http://prysm:3500"
 
 # ASCII Art Banner
 show_banner() {
