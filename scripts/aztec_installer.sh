@@ -94,16 +94,16 @@ check_requirements() {
     # Check available disk space (default minimum 250GB; override with MIN_DISK_GB and ALLOW_LOW_DISK)
     available_kb=$(df / | awk 'NR==2 {print $4}')
     available_gb=$((available_kb / 1024 / 1024))
-    min_disk_gb=${MIN_DISK_GB:-250}
+    min_disk_gb=${MIN_DISK_GB:-100}
     required_kb=$((min_disk_gb * 1024 * 1024))
 
     if [[ $available_kb -lt $required_kb ]]; then
-        case "${ALLOW_LOW_DISK,,}" in
+        case "${ENFORCE_DISK_CHECK,,}" in
             yes|true|1|y)
-                log "Disk space below ${min_disk_gb}GB (detected: ${available_gb}GB). Proceeding due to ALLOW_LOW_DISK.";
+                error "Insufficient disk space. Required ${min_disk_gb}GB; detected ${available_gb}GB. You can set MIN_DISK_GB=<value> or disable with ENFORCE_DISK_CHECK=no."
                 ;;
             *)
-                error "Insufficient disk space. Required ${min_disk_gb}GB; detected ${available_gb}GB. Set MIN_DISK_GB=<value> and ALLOW_LOW_DISK=yes to override for testing."
+                log "Disk space below ${min_disk_gb}GB (detected: ${available_gb}GB). Continuing anyway."
                 ;;
         esac
     fi
