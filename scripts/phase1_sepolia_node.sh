@@ -14,6 +14,7 @@ NC='\033[0m'
 log() { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"; }
 progress() { echo -e "${BLUE}==> $1${NC}"; }
 fail() { echo -e "${RED}[ERROR] $1${NC}"; exit 1; }
+warn() { echo -e "${YELLOW}[WARN] $1${NC}"; }
 
 VALIDATOR_DIR="$HOME/starknet-validator"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -50,6 +51,14 @@ ETHEREUM_RPC_URL=wss://ethereum-sepolia.publicnode.com
 STARKNET_RPC_URL=http://localhost:9545
 STARKNET_CHAIN_ID=0x534e5f5345504f4c4941
 EOF
+
+# Export environment variables for current session
+export PATHFINDER_DATA_DIR="/usr/share/pathfinder/data"
+export ETHEREUM_RPC_URL="wss://ethereum-sepolia.publicnode.com"
+export STARKNET_RPC_URL="http://localhost:9545"
+export STARKNET_CHAIN_ID="0x534e5f5345504f4c4941"
+
+log "✅ Environment variables set"
 
 # Run the original script with our parameters
 log "Running Starknet Sepolia setup..."
