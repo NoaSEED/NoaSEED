@@ -18,6 +18,19 @@ NC='\033[0m'
 VALIDATOR_DIR="$HOME/starknet-validator"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Function to install jq if not available
+install_jq() {
+    if ! command -v jq >/dev/null 2>&1; then
+        echo "Installing jq..."
+        sudo apt update && sudo apt install -y jq
+        if command -v jq >/dev/null 2>&1; then
+            echo "✅ jq installed successfully"
+        else
+            echo "❌ Failed to install jq"
+        fi
+    fi
+}
+
 # Phase status
 PHASE1_COMPLETE=false
 PHASE2_COMPLETE=false
@@ -309,44 +322,99 @@ show_management() {
         ;;
       5)
         progress "Managing wallets..."
-        if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
-          echo "Validator wallet status:"
-          "$VALIDATOR_DIR/staking_manager.sh" status
+        install_jq
+        echo "🔍 Checking wallet status..."
+        
+        # Check if wallets directory exists
+        if [[ -d "$VALIDATOR_DIR/wallets" ]]; then
+          echo "✅ Wallets directory found: $VALIDATOR_DIR/wallets"
           echo ""
-          echo "Wallet files location:"
-          "$VALIDATOR_DIR/staking_manager.sh" wallets
-        else
-          warn "❌ Staking manager not available"
-          echo "Available wallet files:"
-          if [[ -d "$VALIDATOR_DIR/wallets" ]]; then
-            ls -la "$VALIDATOR_DIR/wallets/"
-          else
-            echo "No wallets directory found"
+          echo "📁 Wallet files:"
+          ls -la "$VALIDATOR_DIR/wallets/" 2>/dev/null || echo "No wallet files found"
+          
+          # Check for specific wallet files
+          if [[ -f "$VALIDATOR_DIR/wallets/staking_wallet.json" ]]; then
+            echo "✅ Staking wallet found"
           fi
+          if [[ -f "$VALIDATOR_DIR/wallets/operational_wallet.json" ]]; then
+            echo "✅ Operational wallet found"
+          fi
+          if [[ -f "$VALIDATOR_DIR/wallets/rewards_wallet.json" ]]; then
+            echo "✅ Rewards wallet found"
+          fi
+        else
+          echo "❌ No wallets directory found"
+          echo "Creating wallets directory..."
+          mkdir -p "$VALIDATOR_DIR/wallets"
+          echo "✅ Wallets directory created"
+        fi
+        
+        # Check validator config
+        if [[ -f "$VALIDATOR_DIR/validator_config.json" ]]; then
+          echo ""
+          echo "📋 Validator configuration:"
+          if command -v jq >/dev/null 2>&1; then
+            cat "$VALIDATOR_DIR/validator_config.json" | jq .
+          else
+            echo "jq not installed, showing raw config:"
+            cat "$VALIDATOR_DIR/validator_config.json"
+          fi
+        else
+          echo "❌ No validator config found"
         fi
         read -p "Press Enter to continue..."
         ;;
       6)
         progress "Checking validator status..."
-        if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
-          echo "Validator configuration:"
-          "$VALIDATOR_DIR/staking_manager.sh" status
+        install_jq
+        echo "🔍 Checking validator configuration..."
+        
+        # Check validator config file
+        if [[ -f "$VALIDATOR_DIR/validator_config.json" ]]; then
+          echo "✅ Validator config found"
           echo ""
-          echo "Validator config file:"
-          if [[ -f "$VALIDATOR_DIR/validator_config.json" ]]; then
+          echo "📋 Configuration details:"
+          if command -v jq >/dev/null 2>&1; then
             cat "$VALIDATOR_DIR/validator_config.json" | jq .
           else
-            echo "No validator config found"
+            echo "jq not installed, showing raw config:"
+            cat "$VALIDATOR_DIR/validator_config.json"
           fi
         else
-          warn "❌ Validator not configured"
-          echo "Checking for validator files:"
-          ls -la "$VALIDATOR_DIR/" | grep -E "(validator|staking|phase)"
+          echo "❌ No validator config found"
         fi
+        
+        # Check phase completion
+        echo ""
+        echo "📊 Phase completion status:"
+        if [[ -f "$VALIDATOR_DIR/phase1_complete.json" ]]; then
+          echo "✅ Phase 1: Sepolia Node - COMPLETED"
+        else
+          echo "❌ Phase 1: Sepolia Node - NOT COMPLETED"
+        fi
+        
+        if [[ -f "$VALIDATOR_DIR/phase2_complete.json" ]]; then
+          echo "✅ Phase 2: Validator Staking - COMPLETED"
+        else
+          echo "❌ Phase 2: Validator Staking - NOT COMPLETED"
+        fi
+        
+        # Check for staking manager
+        if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
+          echo "✅ Staking manager script found"
+        else
+          echo "❌ Staking manager script not found"
+        fi
+        
+        # Check for other validator files
+        echo ""
+        echo "📁 Validator files:"
+        ls -la "$VALIDATOR_DIR/" | grep -E "(validator|staking|phase|wallet)" || echo "No validator files found"
         read -p "Press Enter to continue..."
         ;;
       7)
         progress "Checking RPC health..."
+        install_jq
         echo "Testing RPC endpoint..."
         RPC_RESPONSE=$(curl -s -X POST -H "Content-Type: application/json" \
           -d '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' \
@@ -354,7 +422,11 @@ show_management() {
         
         if echo "$RPC_RESPONSE" | grep -q "0x534e5f5345504f4c4941"; then
           log "✅ RPC endpoint is healthy"
-          echo "Chain ID: $(echo "$RPC_RESPONSE" | jq -r '.result')"
+          if command -v jq >/dev/null 2>&1; then
+            echo "Chain ID: $(echo "$RPC_RESPONSE" | jq -r '.result')"
+          else
+            echo "Chain ID: $(echo "$RPC_RESPONSE" | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+          fi
           echo "Response time: $(curl -s -w "%{time_total}" -o /dev/null -X POST -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' http://localhost:9545)s"
         else
           warn "⚠️ RPC endpoint not responding"
