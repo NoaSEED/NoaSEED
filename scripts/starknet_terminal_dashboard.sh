@@ -122,11 +122,10 @@ show_menu() {
   echo -e "${CYAN}2. ⚡ Phase 2: Validator Staking${NC}"
   echo -e "${CYAN}3. 📊 System Status & Monitoring${NC}"
   echo -e "${CYAN}4. 🔧 Management Tools${NC}"
-  echo -e "${CYAN}5. 📋 View Logs${NC}"
-  echo -e "${CYAN}6. 🆘 Help & Documentation${NC}"
+  echo -e "${CYAN}5. 🆘 Help & Documentation${NC}"
   echo -e "${CYAN}0. 🚪 Exit${NC}"
   echo ""
-  echo -e "${YELLOW}Select an option (0-6): ${NC}"
+  echo -e "${YELLOW}Select an option (0-5): ${NC}"
 }
 
 run_phase1() {
@@ -263,9 +262,10 @@ show_management() {
     echo -e "${CYAN}7. 🔍 Check RPC Health${NC}"
     echo -e "${CYAN}8. 💾 Backup Wallets${NC}"
     echo -e "${CYAN}9. 📈 View Metrics${NC}"
+    echo -e "${CYAN}10. 📋 View Logs${NC}"
     echo -e "${CYAN}0. ⬅️ Back to Main Menu${NC}"
     echo ""
-    echo -e "${YELLOW}Select an option (0-9): ${NC}"
+    echo -e "${YELLOW}Select an option (0-10): ${NC}"
     
     read -r choice
     case $choice in
@@ -507,11 +507,14 @@ EOF
         done
         read -p "Press Enter to continue..."
         ;;
+      10)
+        show_logs
+        ;;
       0)
         return 0
         ;;
       *)
-        warn "Invalid option. Please select 0-9."
+        warn "Invalid option. Please select 0-10."
         sleep 2
         ;;
     esac
@@ -617,9 +620,6 @@ main() {
         show_management
         ;;
       5)
-        show_logs
-        ;;
-      6)
         show_help
         ;;
       0)
@@ -627,7 +627,7 @@ main() {
         exit 0
         ;;
       *)
-        warn "Invalid option. Please select 0-6."
+        warn "Invalid option. Please select 0-5."
         sleep 2
         ;;
     esac
