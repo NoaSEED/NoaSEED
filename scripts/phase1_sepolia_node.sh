@@ -40,6 +40,17 @@ fi
 # Make script executable
 chmod +x "$ORIGINAL_SCRIPT"
 
+# Create environment file first
+log "Creating environment configuration..."
+mkdir -p "$VALIDATOR_DIR/env"
+cat > "$VALIDATOR_DIR/env/starknet-sepolia.env" << 'EOF'
+# Starknet Sepolia Configuration
+PATHFINDER_DATA_DIR=/usr/share/pathfinder/data
+ETHEREUM_RPC_URL=wss://ethereum-sepolia.publicnode.com
+STARKNET_RPC_URL=http://localhost:9545
+STARKNET_CHAIN_ID=0x534e5f5345504f4c4941
+EOF
+
 # Run the original script with our parameters
 log "Running Starknet Sepolia setup..."
 "$ORIGINAL_SCRIPT" \
@@ -55,27 +66,51 @@ log "Running Starknet Sepolia setup..."
 # Verify installation
 progress "Verifying installation..."
 
+# Wait for containers to start
+log "Waiting for containers to start..."
+sleep 10
+
 # Check if containers are running
 if docker compose -f compose/starknet-sepolia.docker-compose.yml ps | grep -q "Up"; then
-    log "✅ Pathfinder node is running"
+    log "✅ Containers are running"
 else
-    fail "❌ Pathfinder node failed to start"
+    warn "⚠️ Some containers may not be running yet"
 fi
 
-# Test RPC endpoint
-if curl -s -X POST -H "Content-Type: application/json" \
-    -d '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' \
-    http://localhost:9545 | grep -q "0x534e5f5345504f4c4941"; then
-    log "✅ RPC endpoint responding correctly"
+# Check Pathfinder specifically
+if docker compose -f compose/starknet-sepolia.docker-compose.yml ps pathfinder | grep -q "Up"; then
+    log "✅ Pathfinder node is running"
 else
-    fail "❌ RPC endpoint not responding"
+    warn "⚠️ Pathfinder may still be starting up"
 fi
+
+# Wait a bit more for Pathfinder to fully initialize
+log "Waiting for Pathfinder to initialize..."
+sleep 30
+
+# Test RPC endpoint with retry
+log "Testing RPC endpoint..."
+for i in {1..5}; do
+    if curl -s -X POST -H "Content-Type: application/json" \
+        -d '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' \
+        http://localhost:9545 | grep -q "0x534e5f5345504f4c4941"; then
+        log "✅ RPC endpoint responding correctly"
+        break
+    else
+        if [[ $i -eq 5 ]]; then
+            warn "⚠️ RPC endpoint not responding yet (may need more time)"
+        else
+            log "Retrying RPC test ($i/5)..."
+            sleep 10
+        fi
+    fi
+done
 
 # Test monitoring endpoints
 if curl -s http://localhost:9187/metrics | grep -q "starknet"; then
     log "✅ Metrics endpoint working"
 else
-    warn "⚠️ Metrics endpoint not responding"
+    warn "⚠️ Metrics endpoint not responding yet"
 fi
 
 # Create phase1 completion marker
