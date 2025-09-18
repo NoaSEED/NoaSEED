@@ -120,12 +120,11 @@ show_menu() {
   echo ""
   echo -e "${CYAN}1. 🚀 Phase 1: Sepolia Node Setup${NC}"
   echo -e "${CYAN}2. ⚡ Phase 2: Validator Staking${NC}"
-  echo -e "${CYAN}3. 📊 System Status & Monitoring${NC}"
-  echo -e "${CYAN}4. 🔧 Management Tools${NC}"
-  echo -e "${CYAN}5. 🆘 Help & Documentation${NC}"
+  echo -e "${CYAN}3. 🔧 Management Tools${NC}"
+  echo -e "${CYAN}4. 🆘 Help & Documentation${NC}"
   echo -e "${CYAN}0. 🚪 Exit${NC}"
   echo ""
-  echo -e "${YELLOW}Select an option (0-5): ${NC}"
+  echo -e "${YELLOW}Select an option (0-4): ${NC}"
 }
 
 run_phase1() {
@@ -613,13 +612,9 @@ main() {
         read -p "Press Enter to continue..."
         ;;
       3)
-        show_monitoring
-        read -p "Press Enter to continue..."
-        ;;
-      4)
         show_management
         ;;
-      5)
+      4)
         show_help
         ;;
       0)
@@ -627,7 +622,7 @@ main() {
         exit 0
         ;;
       *)
-        warn "Invalid option. Please select 0-5."
+        warn "Invalid option. Please select 0-4."
         sleep 2
         ;;
     esac
