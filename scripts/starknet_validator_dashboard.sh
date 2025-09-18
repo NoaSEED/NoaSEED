@@ -673,22 +673,34 @@ start_dashboard() {
   
   # Start Flask app in background
   cd "$DASHBOARD_DIR"
-  python3 app.py &
+  nohup python3 app.py > app.log 2>&1 &
+  FLASK_PID=$!
   
   # Wait a moment for server to start
-  sleep 3
+  sleep 5
   
-  log "Dashboard started ✓"
-  echo ""
-  echo -e "${CYAN}🌐 Dashboard URL: http://localhost:$DASHBOARD_PORT${NC}"
-  echo -e "${CYAN}📊 Management Interface: http://localhost:$DASHBOARD_PORT${NC}"
-  echo ""
-  echo -e "${YELLOW}Dashboard Features:${NC}"
-  echo "  • Phase 1: Sepolia Node Setup (Pathfinder + Monitoring)"
-  echo "  • Phase 2: Validator Staking (Wallets + STRK Staking)"
-  echo "  • Phase 3: BTC Pool Integration (Liquidity Pools)"
-  echo ""
-  echo -e "${GREEN}Press Ctrl+C to stop the dashboard${NC}"
+  # Check if Flask is running
+  if ps -p $FLASK_PID > /dev/null; then
+    log "Dashboard started ✓"
+    echo ""
+    echo -e "${CYAN}🌐 Dashboard URL: http://0.0.0.0:$DASHBOARD_PORT${NC}"
+    echo -e "${CYAN}📊 Management Interface: http://0.0.0.0:$DASHBOARD_PORT${NC}"
+    echo -e "${CYAN}🌍 External Access: http://$(hostname -I | awk '{print $1}'):$DASHBOARD_PORT${NC}"
+    echo ""
+    echo -e "${YELLOW}Dashboard Features:${NC}"
+    echo "  • Phase 1: Sepolia Node Setup (Pathfinder + Monitoring)"
+    echo "  • Phase 2: Validator Staking (Wallets + STRK Staking)"
+    echo "  • Phase 3: BTC Pool Integration (Liquidity Pools)"
+    echo ""
+    echo -e "${GREEN}Dashboard is running in background (PID: $FLASK_PID)${NC}"
+    echo -e "${GREEN}To stop: kill $FLASK_PID${NC}"
+    echo -e "${GREEN}To view logs: tail -f $DASHBOARD_DIR/app.log${NC}"
+    
+    # Export FLASK_PID for use in main function
+    export FLASK_PID
+  else
+    fail "Failed to start dashboard. Check logs: $DASHBOARD_DIR/app.log"
+  fi
 }
 
 # Main execution
@@ -714,9 +726,21 @@ main() {
   install_dependencies
   start_dashboard
   
-  # Keep script running
+  # Keep script running and show status
+  echo ""
+  echo -e "${GREEN}Dashboard is running in background${NC}"
+  echo -e "${GREEN}Press Ctrl+C to stop monitoring (dashboard will continue running)${NC}"
+  echo ""
+  
+  # Monitor dashboard status
   while true; do
-    sleep 1
+    if ps -p $FLASK_PID > /dev/null 2>&1; then
+      echo -e "${GREEN}[$(date +'%H:%M:%S')] Dashboard running (PID: $FLASK_PID)${NC}"
+    else
+      echo -e "${RED}[$(date +'%H:%M:%S')] Dashboard stopped${NC}"
+      break
+    fi
+    sleep 30
   done
 }
 
