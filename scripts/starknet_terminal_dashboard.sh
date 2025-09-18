@@ -21,7 +21,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Phase status
 PHASE1_COMPLETE=false
 PHASE2_COMPLETE=false
-PHASE3_COMPLETE=false
 
 log() { echo -e "${GREEN}[$(date +'%H:%M:%S')] $1${NC}"; }
 warn() { echo -e "${YELLOW}[WARN] $1${NC}"; }
@@ -54,9 +53,6 @@ check_phase_status() {
   if [[ -f "$VALIDATOR_DIR/phase2_complete.json" ]]; then
     PHASE2_COMPLETE=true
   fi
-  if [[ -f "$VALIDATOR_DIR/phase3_complete.json" ]]; then
-    PHASE3_COMPLETE=true
-  fi
 }
 
 show_status() {
@@ -79,12 +75,6 @@ show_status() {
     echo -e "${YELLOW}⏳ Phase 2: Validator Staking - PENDING${NC}"
   fi
   
-  # Phase 3 Status
-  if [[ "$PHASE3_COMPLETE" == "true" ]]; then
-    echo -e "${GREEN}✅ Phase 3: BTC Pool Integration - COMPLETE${NC}"
-  else
-    echo -e "${YELLOW}⏳ Phase 3: BTC Pool Integration - PENDING${NC}"
-  fi
   
   echo ""
   
@@ -117,14 +107,13 @@ show_menu() {
   echo ""
   echo -e "${CYAN}1. 🚀 Phase 1: Sepolia Node Setup${NC}"
   echo -e "${CYAN}2. ⚡ Phase 2: Validator Staking${NC}"
-  echo -e "${CYAN}3. ₿ Phase 3: BTC Pool Integration${NC}"
-  echo -e "${CYAN}4. 📊 System Status & Monitoring${NC}"
-  echo -e "${CYAN}5. 🔧 Management Tools${NC}"
-  echo -e "${CYAN}6. 📋 View Logs${NC}"
-  echo -e "${CYAN}7. 🆘 Help & Documentation${NC}"
+  echo -e "${CYAN}3. 📊 System Status & Monitoring${NC}"
+  echo -e "${CYAN}4. 🔧 Management Tools${NC}"
+  echo -e "${CYAN}5. 📋 View Logs${NC}"
+  echo -e "${CYAN}6. 🆘 Help & Documentation${NC}"
   echo -e "${CYAN}0. 🚪 Exit${NC}"
   echo ""
-  echo -e "${YELLOW}Select an option (0-7): ${NC}"
+  echo -e "${YELLOW}Select an option (0-6): ${NC}"
 }
 
 run_phase1() {
@@ -205,39 +194,6 @@ run_phase2() {
   fi
 }
 
-run_phase3() {
-  phase "Starting Phase 3: BTC Pool Integration"
-  
-  if [[ "$PHASE2_COMPLETE" != "true" ]]; then
-    fail "Phase 2 must be completed first!"
-    return 1
-  fi
-  
-  if [[ "$PHASE3_COMPLETE" == "true" ]]; then
-    warn "Phase 3 is already complete!"
-    read -p "Do you want to reconfigure? (y/n): " reconfigure
-    if [[ "$reconfigure" != "y" ]]; then
-      return 0
-    fi
-  fi
-  
-  progress "Setting up BTC pools and integration..."
-  
-  # Run Phase 3 script
-  if [[ -f "$SCRIPT_DIR/phase3_btc_pool.sh" ]]; then
-    log "Running Phase 3 script..."
-    "$SCRIPT_DIR/phase3_btc_pool.sh"
-  else
-    fail "Phase 3 script not found!"
-  fi
-  
-  if [[ $? -eq 0 ]]; then
-    log "✅ Phase 3 completed successfully!"
-    PHASE3_COMPLETE=true
-  else
-    fail "❌ Phase 3 failed. Check logs for details."
-  fi
-}
 
 show_monitoring() {
   echo -e "${BLUE}========================================${NC}"
@@ -410,11 +366,6 @@ show_help() {
   echo "  • Sets up STRK staking for Sepolia testnet"
   echo "  • Configures commission and delegation pools"
   echo ""
-  echo -e "${YELLOW}Phase 3: BTC Pool Integration${NC}"
-  echo "  • Sets up BTC-STRK liquidity pools"
-  echo "  • Integrates with JediSwap DEX"
-  echo "  • Enables BTC staking power (25% weight)"
-  echo ""
   echo -e "${CYAN}🔗 Useful Commands:${NC}"
   echo "  • Check status: docker ps"
   echo "  • View logs: docker logs <container>"
@@ -446,20 +397,16 @@ main() {
         read -p "Press Enter to continue..."
         ;;
       3)
-        run_phase3
-        read -p "Press Enter to continue..."
-        ;;
-      4)
         show_monitoring
         read -p "Press Enter to continue..."
         ;;
-      5)
+      4)
         show_management
         ;;
-      6)
+      5)
         show_logs
         ;;
-      7)
+      6)
         show_help
         ;;
       0)
@@ -467,7 +414,7 @@ main() {
         exit 0
         ;;
       *)
-        warn "Invalid option. Please select 0-7."
+        warn "Invalid option. Please select 0-6."
         sleep 2
         ;;
     esac
