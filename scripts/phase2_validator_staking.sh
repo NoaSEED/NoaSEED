@@ -47,7 +47,14 @@ fi
 
 if ! command -v starkli &> /dev/null; then
     log "Installing starkli..."
-    cargo install starkli --locked
+    # Try different versions if the latest fails
+    if ! cargo install starkli --locked; then
+        log "Trying alternative installation method..."
+        if ! cargo install starkli --version 0.1.7; then
+            log "Trying with specific features..."
+            cargo install starkli --no-default-features --features cli
+        fi
+    fi
 fi
 
 # Set environment variables
