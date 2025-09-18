@@ -18,6 +18,9 @@ NC='\033[0m'
 VALIDATOR_DIR="$HOME/starknet-validator"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Language setting
+LANGUAGE="en"
+
 # Function to install jq if not available
 install_jq() {
     if ! command -v jq >/dev/null 2>&1; then
@@ -29,6 +32,40 @@ install_jq() {
             echo "❌ Failed to install jq"
         fi
     fi
+}
+
+# Function to switch to Spanish
+switch_to_spanish() {
+    LANGUAGE="es"
+    echo -e "${GREEN}🇪🇸 ¡Cambiando a español!${NC}"
+    echo -e "${GREEN}El dashboard ahora está en español.${NC}"
+    echo ""
+    read -p "Presiona Enter para continuar..."
+}
+
+# Function to switch to English
+switch_to_english() {
+    LANGUAGE="en"
+    echo -e "${GREEN}🇺🇸 Switching to English!${NC}"
+    echo -e "${GREEN}The dashboard is now in English.${NC}"
+    echo ""
+    read -p "Press Enter to continue..."
+}
+
+# Function to show menu in Spanish
+show_menu_spanish() {
+  echo -e "${WHITE}========================================${NC}"
+  echo -e "${WHITE}           MENÚ PRINCIPAL${NC}"
+  echo -e "${WHITE}========================================${NC}"
+  echo ""
+  echo -e "${CYAN}1. 🚀 Fase 1: Configuración Nodo Sepolia${NC}"
+  echo -e "${CYAN}2. ⚡ Fase 2: Staking Validador${NC}"
+  echo -e "${CYAN}3. 🔧 Herramientas de Gestión${NC}"
+  echo -e "${CYAN}4. 📚 Documentación${NC}"
+  echo -e "${CYAN}5. 🇺🇸 English${NC}"
+  echo -e "${CYAN}0. 🚪 Salir${NC}"
+  echo ""
+  echo -e "${YELLOW}Selecciona una opción (0-5): ${NC}"
 }
 
 # Phase status
@@ -122,9 +159,10 @@ show_menu() {
   echo -e "${CYAN}2. ⚡ Phase 2: Validator Staking${NC}"
   echo -e "${CYAN}3. 🔧 Management Tools${NC}"
   echo -e "${CYAN}4. 📚 Documentation${NC}"
+  echo -e "${CYAN}5. 🇪🇸 Spanish${NC}"
   echo -e "${CYAN}0. 🚪 Exit${NC}"
   echo ""
-  echo -e "${YELLOW}Select an option (0-4): ${NC}"
+  echo -e "${YELLOW}Select an option (0-5): ${NC}"
 }
 
 run_phase1() {
@@ -599,7 +637,11 @@ main() {
     show_banner
     check_phase_status
     show_status
-    show_menu
+    if [[ "$LANGUAGE" == "es" ]]; then
+      show_menu_spanish
+    else
+      show_menu
+    fi
     
     read -r choice
     case $choice in
@@ -617,12 +659,27 @@ main() {
       4)
         show_help
         ;;
+      5)
+        if [[ "$LANGUAGE" == "es" ]]; then
+          switch_to_english
+        else
+          switch_to_spanish
+        fi
+        ;;
       0)
-        echo -e "${GREEN}Goodbye! 👋${NC}"
+        if [[ "$LANGUAGE" == "es" ]]; then
+          echo -e "${GREEN}¡Hasta luego! 👋${NC}"
+        else
+          echo -e "${GREEN}Goodbye! 👋${NC}"
+        fi
         exit 0
         ;;
       *)
-        warn "Invalid option. Please select 0-4."
+        if [[ "$LANGUAGE" == "es" ]]; then
+          warn "Opción inválida. Por favor selecciona 0-5."
+        else
+          warn "Invalid option. Please select 0-5."
+        fi
         sleep 2
         ;;
     esac
