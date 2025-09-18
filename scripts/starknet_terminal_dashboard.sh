@@ -259,59 +259,115 @@ show_management() {
       1)
         progress "Restarting services..."
         if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
-          docker compose -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" restart
-          log "Services restarted"
+          cd "$VALIDATOR_DIR"
+          docker compose -f compose/starknet-sepolia.docker-compose.yml restart
+          log "✅ Services restarted successfully"
+          echo "Services status:"
+          docker compose -f compose/starknet-sepolia.docker-compose.yml ps
         else
-          warn "No services to restart"
+          warn "❌ No services to restart - docker-compose file not found"
         fi
         read -p "Press Enter to continue..."
         ;;
       2)
         progress "Stopping all services..."
         if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
-          docker compose -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" down
-          log "All services stopped"
+          cd "$VALIDATOR_DIR"
+          docker compose -f compose/starknet-sepolia.docker-compose.yml down
+          log "✅ All services stopped successfully"
+          echo "Checking if containers are stopped:"
+          docker ps | grep starknet || echo "No starknet containers running"
         else
-          warn "No services to stop"
+          warn "❌ No services to stop - docker-compose file not found"
         fi
         read -p "Press Enter to continue..."
         ;;
       3)
         progress "Cleaning system..."
+        echo "Cleaning Docker system..."
         docker system prune -f
-        log "System cleaned"
+        echo "Cleaning unused images..."
+        docker image prune -f
+        echo "Cleaning unused volumes..."
+        docker volume prune -f
+        log "✅ System cleaned successfully"
+        echo "Disk usage after cleanup:"
+        df -h / | tail -1
         read -p "Press Enter to continue..."
         ;;
       4)
         progress "Updating system..."
-        sudo apt update && sudo apt upgrade -y
-        log "System updated"
+        echo "Updating package lists..."
+        sudo apt update
+        echo "Upgrading packages..."
+        sudo apt upgrade -y
+        echo "Cleaning up..."
+        sudo apt autoremove -y
+        sudo apt autoclean
+        log "✅ System updated successfully"
         read -p "Press Enter to continue..."
         ;;
       5)
+        progress "Managing wallets..."
         if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
+          echo "Validator wallet status:"
           "$VALIDATOR_DIR/staking_manager.sh" status
+          echo ""
+          echo "Wallet files location:"
+          "$VALIDATOR_DIR/staking_manager.sh" wallets
         else
-          warn "Staking manager not available"
+          warn "❌ Staking manager not available"
+          echo "Available wallet files:"
+          if [[ -d "$VALIDATOR_DIR/wallets" ]]; then
+            ls -la "$VALIDATOR_DIR/wallets/"
+          else
+            echo "No wallets directory found"
+          fi
         fi
         read -p "Press Enter to continue..."
         ;;
       6)
+        progress "Checking validator status..."
         if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
+          echo "Validator configuration:"
           "$VALIDATOR_DIR/staking_manager.sh" status
+          echo ""
+          echo "Validator config file:"
+          if [[ -f "$VALIDATOR_DIR/validator_config.json" ]]; then
+            cat "$VALIDATOR_DIR/validator_config.json" | jq .
+          else
+            echo "No validator config found"
+          fi
         else
-          warn "Validator not configured"
+          warn "❌ Validator not configured"
+          echo "Checking for validator files:"
+          ls -la "$VALIDATOR_DIR/" | grep -E "(validator|staking|phase)"
         fi
         read -p "Press Enter to continue..."
         ;;
       7)
         progress "Checking RPC health..."
-        if curl -s -X POST -H "Content-Type: application/json" \
+        echo "Testing RPC endpoint..."
+        RPC_RESPONSE=$(curl -s -X POST -H "Content-Type: application/json" \
           -d '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' \
-          http://localhost:9545 | grep -q "0x534e5f5345504f4c4941"; then
+          http://localhost:9545)
+        
+        if echo "$RPC_RESPONSE" | grep -q "0x534e5f5345504f4c4941"; then
           log "✅ RPC endpoint is healthy"
+          echo "Chain ID: $(echo "$RPC_RESPONSE" | jq -r '.result')"
+          echo "Response time: $(curl -s -w "%{time_total}" -o /dev/null -X POST -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' http://localhost:9545)s"
         else
           warn "⚠️ RPC endpoint not responding"
+          echo "Response: $RPC_RESPONSE"
+        fi
+        
+        echo ""
+        echo "Testing other endpoints:"
+        echo "Metrics endpoint:"
+        if curl -s http://localhost:9187/metrics | head -1; then
+          echo "✅ Metrics endpoint responding"
+        else
+          echo "❌ Metrics endpoint not responding"
         fi
         read -p "Press Enter to continue..."
         ;;
@@ -320,19 +376,63 @@ show_management() {
         if [[ -d "$VALIDATOR_DIR/wallets" ]]; then
           BACKUP_DIR="$VALIDATOR_DIR/wallets/backup-$(date +%Y%m%d-%H%M%S)"
           mkdir -p "$BACKUP_DIR"
-          cp -r "$VALIDATOR_DIR/wallets"/*.json "$BACKUP_DIR/" 2>/dev/null || true
-          log "✅ Wallets backed up to: $BACKUP_DIR"
+          
+          # Copy wallet files
+          cp "$VALIDATOR_DIR/wallets"/*.json "$BACKUP_DIR/" 2>/dev/null || true
+          
+          # Copy validator config
+          if [[ -f "$VALIDATOR_DIR/validator_config.json" ]]; then
+            cp "$VALIDATOR_DIR/validator_config.json" "$BACKUP_DIR/"
+          fi
+          
+          # Create backup info
+          cat > "$BACKUP_DIR/backup_info.txt" << EOF
+# Wallet Backup Information
+Created: $(date)
+Source: $VALIDATOR_DIR/wallets/
+Backup: $BACKUP_DIR/
+
+Files backed up:
+$(ls -la "$BACKUP_DIR" | grep -v "backup_info.txt")
+
+Security Note: Keep this backup secure and encrypted!
+EOF
+          
+          log "✅ Wallets backed up successfully"
+          echo "Backup location: $BACKUP_DIR"
+          echo "Files backed up:"
+          ls -la "$BACKUP_DIR"
         else
-          warn "No wallets to backup"
+          warn "❌ No wallets to backup"
+          echo "Wallets directory not found at: $VALIDATOR_DIR/wallets"
         fi
         read -p "Press Enter to continue..."
         ;;
       9)
-        progress "Opening metrics..."
+        progress "Viewing metrics information..."
         echo "Available metrics endpoints:"
-        echo "  • Prometheus: http://$(hostname -I | awk '{print $1}'):9091"
-        echo "  • Grafana: http://$(hostname -I | awk '{print $1}'):3001"
-        echo "  • Node Metrics: http://$(hostname -I | awk '{print $1}'):9187"
+        echo ""
+        echo "📊 Prometheus (Metrics Collection):"
+        echo "  URL: http://$(hostname -I | awk '{print $1}'):9091"
+        echo "  Local: http://localhost:9091"
+        echo ""
+        echo "📈 Grafana (Dashboards):"
+        echo "  URL: http://$(hostname -I | awk '{print $1}'):3001"
+        echo "  Local: http://localhost:3001"
+        echo "  Login: admin/admin"
+        echo ""
+        echo "🔍 Node Metrics (Raw):"
+        echo "  URL: http://$(hostname -I | awk '{print $1}'):9187"
+        echo "  Local: http://localhost:9187"
+        echo ""
+        echo "Testing endpoints..."
+        for port in 9091 3001 9187; do
+          if curl -s "http://localhost:$port" >/dev/null 2>&1; then
+            echo "✅ Port $port: Responding"
+          else
+            echo "❌ Port $port: Not responding"
+          fi
+        done
         read -p "Press Enter to continue..."
         ;;
       0)
