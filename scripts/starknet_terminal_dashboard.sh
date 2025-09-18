@@ -121,7 +121,7 @@ show_menu() {
   echo -e "${CYAN}1. 🚀 Phase 1: Sepolia Node Setup${NC}"
   echo -e "${CYAN}2. ⚡ Phase 2: Validator Staking${NC}"
   echo -e "${CYAN}3. 🔧 Management Tools${NC}"
-  echo -e "${CYAN}4. 🆘 Help & Documentation${NC}"
+  echo -e "${CYAN}4. 📚 Documentation${NC}"
   echo -e "${CYAN}0. 🚪 Exit${NC}"
   echo ""
   echo -e "${YELLOW}Select an option (0-4): ${NC}"
