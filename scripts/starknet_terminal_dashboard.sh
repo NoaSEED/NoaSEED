@@ -236,73 +236,114 @@ show_monitoring() {
 }
 
 show_management() {
-  echo -e "${BLUE}========================================${NC}"
-  echo -e "${BLUE}           MANAGEMENT TOOLS${NC}"
-  echo -e "${BLUE}========================================${NC}"
-  echo ""
-  echo -e "${CYAN}1. 🔄 Restart Services${NC}"
-  echo -e "${CYAN}2. 🛑 Stop All Services${NC}"
-  echo -e "${CYAN}3. 🧹 Clean System${NC}"
-  echo -e "${CYAN}4. 📦 Update System${NC}"
-  echo -e "${CYAN}5. 🔐 Manage Wallets${NC}"
-  echo -e "${CYAN}6. 📊 Validator Status${NC}"
-  echo -e "${CYAN}0. ⬅️ Back to Main Menu${NC}"
-  echo ""
-  echo -e "${YELLOW}Select an option (0-6): ${NC}"
-  
-  read -r choice
-  case $choice in
-    1)
-      progress "Restarting services..."
-      if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
-        docker compose -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" restart
-        log "Services restarted"
-      else
-        warn "No services to restart"
-      fi
-      ;;
-    2)
-      progress "Stopping all services..."
-      if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
-        docker compose -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" down
-        log "All services stopped"
-      else
-        warn "No services to stop"
-      fi
-      ;;
-    3)
-      progress "Cleaning system..."
-      docker system prune -f
-      log "System cleaned"
-      ;;
-    4)
-      progress "Updating system..."
-      apt update && apt upgrade -y
-      log "System updated"
-      ;;
-    5)
-      if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
-        "$VALIDATOR_DIR/staking_manager.sh" status
-      else
-        warn "Staking manager not available"
-      fi
-      ;;
-    6)
-      if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
-        "$VALIDATOR_DIR/staking_manager.sh" status
-      else
-        warn "Validator not configured"
-      fi
-      ;;
-    0)
-      return 0
-      ;;
-    *)
-      warn "Invalid option"
-      ;;
-  esac
-  
-  read -p "Press Enter to continue..."
+  while true; do
+    echo -e "${BLUE}========================================${NC}"
+    echo -e "${BLUE}           MANAGEMENT TOOLS${NC}"
+    echo -e "${BLUE}========================================${NC}"
+    echo ""
+    echo -e "${CYAN}1. 🔄 Restart Services${NC}"
+    echo -e "${CYAN}2. 🛑 Stop All Services${NC}"
+    echo -e "${CYAN}3. 🧹 Clean System${NC}"
+    echo -e "${CYAN}4. 📦 Update System${NC}"
+    echo -e "${CYAN}5. 🔐 Manage Wallets${NC}"
+    echo -e "${CYAN}6. 📊 Validator Status${NC}"
+    echo -e "${CYAN}7. 🔍 Check RPC Health${NC}"
+    echo -e "${CYAN}8. 💾 Backup Wallets${NC}"
+    echo -e "${CYAN}9. 📈 View Metrics${NC}"
+    echo -e "${CYAN}0. ⬅️ Back to Main Menu${NC}"
+    echo ""
+    echo -e "${YELLOW}Select an option (0-9): ${NC}"
+    
+    read -r choice
+    case $choice in
+      1)
+        progress "Restarting services..."
+        if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
+          docker compose -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" restart
+          log "Services restarted"
+        else
+          warn "No services to restart"
+        fi
+        read -p "Press Enter to continue..."
+        ;;
+      2)
+        progress "Stopping all services..."
+        if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
+          docker compose -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" down
+          log "All services stopped"
+        else
+          warn "No services to stop"
+        fi
+        read -p "Press Enter to continue..."
+        ;;
+      3)
+        progress "Cleaning system..."
+        docker system prune -f
+        log "System cleaned"
+        read -p "Press Enter to continue..."
+        ;;
+      4)
+        progress "Updating system..."
+        sudo apt update && sudo apt upgrade -y
+        log "System updated"
+        read -p "Press Enter to continue..."
+        ;;
+      5)
+        if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
+          "$VALIDATOR_DIR/staking_manager.sh" status
+        else
+          warn "Staking manager not available"
+        fi
+        read -p "Press Enter to continue..."
+        ;;
+      6)
+        if [[ -f "$VALIDATOR_DIR/staking_manager.sh" ]]; then
+          "$VALIDATOR_DIR/staking_manager.sh" status
+        else
+          warn "Validator not configured"
+        fi
+        read -p "Press Enter to continue..."
+        ;;
+      7)
+        progress "Checking RPC health..."
+        if curl -s -X POST -H "Content-Type: application/json" \
+          -d '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' \
+          http://localhost:9545 | grep -q "0x534e5f5345504f4c4941"; then
+          log "✅ RPC endpoint is healthy"
+        else
+          warn "⚠️ RPC endpoint not responding"
+        fi
+        read -p "Press Enter to continue..."
+        ;;
+      8)
+        progress "Creating wallet backup..."
+        if [[ -d "$VALIDATOR_DIR/wallets" ]]; then
+          BACKUP_DIR="$VALIDATOR_DIR/wallets/backup-$(date +%Y%m%d-%H%M%S)"
+          mkdir -p "$BACKUP_DIR"
+          cp -r "$VALIDATOR_DIR/wallets"/*.json "$BACKUP_DIR/" 2>/dev/null || true
+          log "✅ Wallets backed up to: $BACKUP_DIR"
+        else
+          warn "No wallets to backup"
+        fi
+        read -p "Press Enter to continue..."
+        ;;
+      9)
+        progress "Opening metrics..."
+        echo "Available metrics endpoints:"
+        echo "  • Prometheus: http://$(hostname -I | awk '{print $1}'):9091"
+        echo "  • Grafana: http://$(hostname -I | awk '{print $1}'):3001"
+        echo "  • Node Metrics: http://$(hostname -I | awk '{print $1}'):9187"
+        read -p "Press Enter to continue..."
+        ;;
+      0)
+        return 0
+        ;;
+      *)
+        warn "Invalid option. Please select 0-9."
+        sleep 2
+        ;;
+    esac
+  done
 }
 
 show_logs() {
