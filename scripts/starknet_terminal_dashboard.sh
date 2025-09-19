@@ -16,6 +16,7 @@ NC='\033[0m'
 
 # Configuration
 VALIDATOR_DIR="$HOME/starknet-validator"
+SEPOLIA_DIR="$HOME/starknet-sepolia"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Language setting
@@ -97,9 +98,12 @@ EOF
 }
 
 check_phase_status() {
-  if [[ -f "$VALIDATOR_DIR/phase1_complete.json" ]]; then
+  # Check Phase 1 - Sepolia Node
+  if [[ -f "$VALIDATOR_DIR/phase1_complete.json" ]] || [[ -f "$SEPOLIA_DIR/docker-compose.yml" ]]; then
     PHASE1_COMPLETE=true
   fi
+  
+  # Check Phase 2 - Validator Staking
   if [[ -f "$VALIDATOR_DIR/phase2_complete.json" ]]; then
     PHASE2_COMPLETE=true
   fi
@@ -176,30 +180,17 @@ run_phase1() {
     fi
   fi
   
-  progress "Installing Sepolia Node with Pathfinder..."
+  progress "Installing Sepolia Node with Pathfinder and Juno Snapshots..."
   
-  # Check if original script exists
-  ORIGINAL_SCRIPT="$SCRIPT_DIR/starknet_bitcoin_oneclick.sh"
-  if [[ ! -f "$ORIGINAL_SCRIPT" ]]; then
-    fail "Original starknet script not found at $ORIGINAL_SCRIPT"
+  # Check if new installer script exists
+  INSTALLER_SCRIPT="$SCRIPT_DIR/starknet_sepolia_installer_with_snapshots.sh"
+  if [[ ! -f "$INSTALLER_SCRIPT" ]]; then
+    fail "Starknet Sepolia installer not found at $INSTALLER_SCRIPT"
   fi
   
-  # Run Phase 1 script
-  if [[ -f "$SCRIPT_DIR/phase1_sepolia_node.sh" ]]; then
-    log "Running Phase 1 script..."
-    "$SCRIPT_DIR/phase1_sepolia_node.sh"
-  else
-    log "Running original starknet script..."
-    "$ORIGINAL_SCRIPT" \
-      --yes \
-      --eth-ws "wss://ethereum-sepolia.publicnode.com" \
-      --data-dir "$VALIDATOR_DIR/pathfinder-data" \
-      --rpc-port 9545 \
-      --monitoring Y \
-      --grafana-port 3001 \
-      --prom-port 9091 \
-      --node-exporter-port 9101
-  fi
+  # Run the new installer script
+  log "Running Starknet Sepolia installer with snapshots..."
+  "$INSTALLER_SCRIPT" --yes
   
   if [[ $? -eq 0 ]]; then
     log "✅ Phase 1 completed successfully!"
@@ -308,7 +299,13 @@ show_management() {
     case $choice in
       1)
         progress "Restarting services..."
-        if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
+        if [[ -f "$SEPOLIA_DIR/docker-compose.yml" ]]; then
+          cd "$SEPOLIA_DIR"
+          docker compose restart
+          log "✅ Services restarted successfully"
+          echo "Services status:"
+          docker compose ps
+        elif [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
           cd "$VALIDATOR_DIR"
           docker compose -f compose/starknet-sepolia.docker-compose.yml restart
           log "✅ Services restarted successfully"
@@ -316,12 +313,21 @@ show_management() {
           docker compose -f compose/starknet-sepolia.docker-compose.yml ps
         else
           warn "❌ No services to restart - docker-compose file not found"
+          echo "Checked locations:"
+          echo "  - $SEPOLIA_DIR/docker-compose.yml"
+          echo "  - $VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml"
         fi
         read -p "Press Enter to continue..."
         ;;
       2)
         progress "Stopping all services..."
-        if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
+        if [[ -f "$SEPOLIA_DIR/docker-compose.yml" ]]; then
+          cd "$SEPOLIA_DIR"
+          docker compose down
+          log "✅ All services stopped successfully"
+          echo "Checking if containers are stopped:"
+          docker ps | grep starknet || echo "No starknet containers running"
+        elif [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
           cd "$VALIDATOR_DIR"
           docker compose -f compose/starknet-sepolia.docker-compose.yml down
           log "✅ All services stopped successfully"
@@ -329,6 +335,9 @@ show_management() {
           docker ps | grep starknet || echo "No starknet containers running"
         else
           warn "❌ No services to stop - docker-compose file not found"
+          echo "Checked locations:"
+          echo "  - $SEPOLIA_DIR/docker-compose.yml"
+          echo "  - $VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml"
         fi
         read -p "Press Enter to continue..."
         ;;
@@ -574,10 +583,17 @@ show_logs() {
   read -r choice
   case $choice in
     1)
-      if [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
+      # Check for Sepolia node in different locations
+      if [[ -f "$SEPOLIA_DIR/docker-compose.yml" ]]; then
+        cd "$SEPOLIA_DIR"
+        docker compose logs -f --tail=50 pathfinder
+      elif [[ -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" ]]; then
         docker compose -f "$VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml" logs -f --tail=50 pathfinder
       else
-        warn "Node not running"
+        warn "Node not running or not found"
+        echo "Checked locations:"
+        echo "  - $SEPOLIA_DIR/docker-compose.yml"
+        echo "  - $VALIDATOR_DIR/compose/starknet-sepolia.docker-compose.yml"
       fi
       ;;
     2)
