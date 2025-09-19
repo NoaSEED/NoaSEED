@@ -68,3 +68,5 @@ echo -e "${CYAN}📊 Service Status:${NC}"
 docker compose -f compose/starknet-sepolia.docker-compose.yml ps
 echo ""
 echo -e "${GREEN}🎉 Phase 1 should now be working!${NC}"
+
+

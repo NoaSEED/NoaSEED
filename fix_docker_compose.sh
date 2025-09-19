@@ -74,3 +74,5 @@ echo -e "${CYAN}📊 Service Status:${NC}"
 docker compose -f compose/starknet-sepolia.docker-compose.yml ps
 echo ""
 echo -e "${GREEN}🎉 Services should now be running correctly!${NC}"
+
+

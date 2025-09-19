@@ -193,3 +193,5 @@ echo "  2. Install starkli for full functionality: ./install_starkli.sh"
 echo "  3. Check status: ./staking_manager.sh status"
 echo ""
 echo "⚠️  Note: This is a simplified setup. For full staking functionality, install starkli."
+
+

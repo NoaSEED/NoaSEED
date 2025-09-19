@@ -50,3 +50,5 @@ echo -e "${GREEN}Starting dashboard...${NC}"
 
 # Launch the dashboard
 exec "$DASHBOARD_SCRIPT"
+
+

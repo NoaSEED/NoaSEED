@@ -338,3 +338,5 @@ echo "  1. Get testnet tokens: ./get_testnet_tokens.sh"
 echo "  2. Check wallet status: ./staking_manager.sh status"
 echo "  3. Show wallet files: ./staking_manager.sh wallets"
 echo "  4. Stake tokens: ./staking_manager.sh stake 1000000000000000000"
+
+

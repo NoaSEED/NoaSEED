@@ -119,3 +119,5 @@ echo "  • Prometheus: http://$(hostname -I | awk '{print $1}'):9091"
 echo "  • Grafana: http://$(hostname -I | awk '{print $1}'):3001 (admin/admin)"
 echo ""
 echo -e "${GREEN}✅ Phase 1 is now ready for Phase 2!${NC}"
+
+

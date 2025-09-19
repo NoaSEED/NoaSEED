@@ -58,3 +58,5 @@ else
     echo -e "${RED}❌ Failed to create marker file${NC}"
     exit 1
 fi
+
+

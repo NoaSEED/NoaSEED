@@ -103,3 +103,5 @@ echo "2. Use online tools for wallet creation"
 echo "3. Install starkli manually from: https://github.com/xJonathanLEI/starkli"
 echo ""
 exit 1
+
+
