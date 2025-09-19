@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SEEDNodes - One-Click Installer: Starknet Sepolia (Pathfinder) with Juno Snapshots
+# SeedNodes - One-Click Installer: Starknet Sepolia (Pathfinder) with Juno Snapshots
 # Accelerates sync using official Juno snapshots from Nethermind
 
 set -e
@@ -194,38 +194,71 @@ EOF
 sudo mkdir -p /usr/share/pathfinder/data
 sudo chown -R $USER:$USER /usr/share/pathfinder
 
-# Download and apply Juno snapshot
-log "📥 Downloading Juno snapshot for ultra-fast sync..."
-progress "This may take several minutes depending on your internet connection..."
+# Function to download Juno snapshot
+download_juno_snapshot() {
+  log "📥 Downloading Juno snapshot for ultra-fast sync..."
+  progress "This may take several minutes depending on your internet connection..."
 
-# Create snapshot directory
-mkdir -p snapshots
-cd snapshots
+  # Create snapshot directory
+  mkdir -p snapshots
+  cd snapshots
 
-# Download latest snapshot
-SNAPSHOT_URL="https://juno.nethermind.io/snapshots/starknet-sepolia-latest.tar.zst"
-log "Downloading snapshot from: $SNAPSHOT_URL"
+  # Try multiple snapshot URLs
+  SNAPSHOT_URLS=(
+    "https://juno-snapshots.nethermind.dev/files/sepolia/latest"
+    "https://juno.nethermind.io/snapshots/starknet-sepolia-latest.tar.zst"
+    "https://snapshots.juno.nethermind.io/starknet-sepolia-latest.tar.zst"
+  )
 
-if wget -O starknet-sepolia-latest.tar.zst "$SNAPSHOT_URL"; then
-  log "✅ Snapshot downloaded successfully"
-  
-  # Extract snapshot
-  progress "Extracting snapshot (this may take 10-15 minutes)..."
-  if tar --zstd -xf starknet-sepolia-latest.tar.zst -C /usr/share/pathfinder/data; then
-    log "✅ Snapshot extracted successfully"
+  SNAPSHOT_DOWNLOADED=false
+
+  for SNAPSHOT_URL in "${SNAPSHOT_URLS[@]}"; do
+    log "Trying snapshot URL: $SNAPSHOT_URL"
     
-    # Set proper permissions
-    sudo chown -R $USER:$USER /usr/share/pathfinder/data
-    
-    # Clean up
-    rm -f starknet-sepolia-latest.tar.zst
-    log "✅ Snapshot cleanup completed"
-  else
-    warn "Failed to extract snapshot, continuing with normal sync..."
+    # Determine file extension based on URL
+    if [[ "$SNAPSHOT_URL" == *".tar.zst" ]]; then
+      SNAPSHOT_FILE="starknet-sepolia-latest.tar.zst"
+      EXTRACT_CMD="tar --zstd -xf"
+    else
+      SNAPSHOT_FILE="starknet-sepolia-latest.tar"
+      EXTRACT_CMD="tar -xf"
+    fi
+
+    if wget -O "$SNAPSHOT_FILE" "$SNAPSHOT_URL" 2>/dev/null; then
+      log "✅ Snapshot downloaded successfully from: $SNAPSHOT_URL"
+      
+      # Extract snapshot
+      progress "Extracting snapshot (this may take 10-15 minutes)..."
+      if $EXTRACT_CMD "$SNAPSHOT_FILE" -C /usr/share/pathfinder/data; then
+        log "✅ Snapshot extracted successfully"
+        
+        # Set proper permissions
+        sudo chown -R $USER:$USER /usr/share/pathfinder/data
+        
+        # Clean up
+        rm -f "$SNAPSHOT_FILE"
+        log "✅ Snapshot cleanup completed"
+        SNAPSHOT_DOWNLOADED=true
+        break
+      else
+        warn "Failed to extract snapshot from: $SNAPSHOT_URL"
+        rm -f "$SNAPSHOT_FILE"
+      fi
+    else
+      warn "Failed to download snapshot from: $SNAPSHOT_URL"
+    fi
+  done
+
+  if [[ "$SNAPSHOT_DOWNLOADED" == "false" ]]; then
+    warn "All snapshot download attempts failed, continuing with normal sync..."
+    warn "This will take significantly longer to synchronize"
   fi
-else
-  warn "Failed to download snapshot, continuing with normal sync..."
-fi
+
+  cd "$PROJECT_DIR"
+}
+
+# Download and apply Juno snapshot
+download_juno_snapshot
 
 cd "$PROJECT_DIR"
 

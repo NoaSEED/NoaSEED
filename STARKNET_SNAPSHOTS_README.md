@@ -1,4 +1,4 @@
-# 🚀 SEEDNodes - Starknet Sepolia Installer with Juno Snapshots
+# 🚀 SeedNodes - Starknet Sepolia Installer with Juno Snapshots
 
 ## 📋 Overview
 
@@ -204,8 +204,8 @@ docker compose restart pathfinder
 ## 🆘 Soporte
 
 - **Issues**: [GitHub Issues](https://github.com/NoaSEED/NoaSEED/issues)
-- **Discord**: [SEEDNodes Discord](https://discord.gg/seednodes)
-- **Twitter**: [@SEEDNodes](https://twitter.com/seednodes)
+- **Discord**: [SeedNodes Discord](https://discord.gg/seednodes)
+- **Twitter**: [@SeedNodes](https://twitter.com/seednodes)
 
 ## 📄 Licencia
 
