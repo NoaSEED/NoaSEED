@@ -191,8 +191,8 @@ STARKNET_CHAIN_ID=0x534e5f5345504f4c4941
 EOF
 
 # Create data directory
-sudo mkdir -p /usr/share/pathfinder/data
-sudo chown -R $USER:$USER /usr/share/pathfinder
+sudo mkdir -p /usr/share/juno/data
+sudo chown -R $USER:$USER /usr/share/juno
 
 # Function to download Juno snapshot
 download_juno_snapshot() {
@@ -229,11 +229,11 @@ download_juno_snapshot() {
       
       # Extract snapshot
       progress "Extracting snapshot (this may take 10-15 minutes)..."
-      if $EXTRACT_CMD "$SNAPSHOT_FILE" -C /usr/share/pathfinder/data; then
+      if $EXTRACT_CMD "$SNAPSHOT_FILE" -C /usr/share/juno/data; then
         log "✅ Snapshot extracted successfully"
         
         # Set proper permissions
-        sudo chown -R $USER:$USER /usr/share/pathfinder/data
+        sudo chown -R $USER:$USER /usr/share/juno/data
         
         # Clean up
         rm -f "$SNAPSHOT_FILE"
@@ -268,27 +268,34 @@ cat > docker-compose.yml << 'EOF'
 version: '3.8'
 
 services:
-  pathfinder:
-    image: eqlabs/pathfinder:latest
-    container_name: starknet-pathfinder
+  juno:
+    image: nethermind/juno:latest
+    container_name: starknet-juno
     restart: unless-stopped
     ports:
-      - "9545:9545"
-      - "9187:9187"
+      - "9545:6060"
+      - "6061:6061"
+      - "9187:8080"
     volumes:
-      - /usr/share/pathfinder/data:/usr/share/pathfinder/data
+      - /usr/share/juno/data:/data
     environment:
-      - PATHFINDER_DATA_DIR=/usr/share/pathfinder/data
-      - ETHEREUM_RPC_URL=wss://ethereum-sepolia.publicnode.com
+      - ETH_NODE_URL=wss://ethereum-sepolia.publicnode.com
       - STARKNET_RPC_URL=http://localhost:9545
       - STARKNET_CHAIN_ID=0x534e5f5345504f4c4941
     command: >
-      --ethereum.url ${ETHEREUM_RPC_URL}
-      --http-rpc 0.0.0.0:9545
-      --chain-id ${STARKNET_CHAIN_ID}
-      --metrics 0.0.0.0:9187
+      --http
+      --http-port 6060
+      --http-host 0.0.0.0
+      --db-path /data
+      --ws
+      --ws-port 6061
+      --ws-host 0.0.0.0
+      --eth-node ${ETH_NODE_URL}
+      --metrics
+      --metrics-port 8080
+      --metrics-host 0.0.0.0
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9545"]
+      test: ["CMD", "curl", "-f", "http://localhost:6060"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -347,9 +354,9 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'pathfinder'
+  - job_name: 'juno'
     static_configs:
-      - targets: ['pathfinder:9187']
+      - targets: ['juno:8080']
   
   - job_name: 'node-exporter'
     static_configs:
