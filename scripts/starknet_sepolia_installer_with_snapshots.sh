@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SeedNodes - One-Click Installer: Starknet Sepolia (Pathfinder) with Juno Snapshots
+# SEEDNODES - One-Click Installer: Starknet Sepolia (Pathfinder) with Juno Snapshots
 # Accelerates sync using official Juno snapshots from Nethermind
 
 set -e
