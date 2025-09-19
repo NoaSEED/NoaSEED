@@ -284,11 +284,9 @@ services:
       - STARKNET_CHAIN_ID=0x534e5f5345504f4c4941
     command: >
       --ethereum.url ${ETHEREUM_RPC_URL}
-      --http-rpc-address 0.0.0.0
-      --http-rpc-port 9545
+      --http-rpc 0.0.0.0:9545
       --chain-id ${STARKNET_CHAIN_ID}
-      --metrics-address 0.0.0.0
-      --metrics-port 9187
+      --metrics 0.0.0.0:9187
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9545"]
       interval: 30s
